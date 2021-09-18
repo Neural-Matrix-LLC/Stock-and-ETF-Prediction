@@ -3,8 +3,7 @@ numpy
 matplotlib
 seaborn
 yfinance
-ta
-fastai
+arch
 sklearn
 keras
 mlxtend
