@@ -23,3 +23,9 @@ Accuracy based on whether the model is able to predict whether the stock price c
 
 # Data Preprocessing
 Problems with Financial data: scarcity, non-stationarity, and state-dependence. Financial data exhibits very low signal-to-noise ratio. Neural networks are low bias and high-variance learners: models will overfit the noise in the data.
+
+# Prerequisites
+```
+pip install -r requirements.txt
+jupyter labextension install jupyterlab-plotly
+```
