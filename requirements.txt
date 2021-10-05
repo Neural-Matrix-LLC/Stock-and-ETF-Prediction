@@ -7,4 +7,3 @@ arch
 sklearn
 keras
 mlxtend
-config
