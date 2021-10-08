@@ -2,8 +2,6 @@ pandas
 numpy
 matplotlib
 seaborn
-yfinance
+ipywidgets
 arch
 sklearn
-keras
-mlxtend
