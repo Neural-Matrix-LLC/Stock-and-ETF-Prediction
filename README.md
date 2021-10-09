@@ -6,8 +6,11 @@ Input features:
 2. The key indexes: S&P 500, Nasdaq 100, Hang Seng Index,
 3. may put additional features of technical indicators based on stock price
 
-# Data
+# Sample Data
 [Google Drive](https://drive.google.com/file/d/1KJWGDK7rCGNb97JzJn4odw2EgVlyS350/view?usp=sharing)
+
+## Sample LSTM Model
+[Google Drive](https://drive.google.com/drive/folders/1DVhuiVqXavXG_t1fvKNDv9yy9POVZuGn)
 
 ## Expected Output
 Build Framework (enable future iterations/improvements): We need a process framework will be able to modify the features set and able to find best parameters of model based of the modified features set. A accurate measurement to ensure the model accuracy on the prediction. The final model will run against look forward data set to get the actual accuracy.
