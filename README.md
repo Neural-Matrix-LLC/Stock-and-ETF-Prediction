@@ -9,7 +9,7 @@ Input features:
 # Sample Data
 [Google Drive](https://drive.google.com/file/d/1KJWGDK7rCGNb97JzJn4odw2EgVlyS350/view?usp=sharing)
 
-# Sample LSTM Model
+## Sample LSTM Model
 [Google Drive](https://drive.google.com/drive/folders/1DVhuiVqXavXG_t1fvKNDv9yy9POVZuGn)
 
 ## Expected Output
