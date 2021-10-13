@@ -1,7 +1,10 @@
+dotenv
 pandas
 numpy
+mysql
 matplotlib
 seaborn
-ipywidgets
+statsmodels
+scipy
 arch
 sklearn
