@@ -1,0 +1,22 @@
+MSFT:
+Macro precision score: 0.6030417745898917
+Micro precision score: 0.6767123287671233
+Macro f1 score: 0.6055860805860805
+Micro f1 score: 0.6767123287671233
+
+INTC:
+Macro precision score: 0.5369224422442245
+Micro precision score: 0.4273972602739726
+Macro f1 score: 0.4273800677070432
+Micro f1 score: 0.4273972602739726
+
+EBAY:
+Macro precision score: 0.5320391414141414
+Micro precision score: 0.4191780821917808
+Macro f1 score: 0.41175576233047495
+Micro f1 score: 0.4191780821917808
+EBAY:
+Macro precision score: 0.5320391414141414
+Micro precision score: 0.4191780821917808
+Macro f1 score: 0.41175576233047495
+Micro f1 score: 0.4191780821917808
