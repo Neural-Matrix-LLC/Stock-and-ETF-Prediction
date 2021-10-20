@@ -27,3 +27,21 @@ Macro precision score: 0.5990434782608696
 Micro precision score: 0.5150684931506849
 Macro f1 score: 0.5150539329385007
 Micro f1 score: 0.5150684931506849
+
+UAL:
+Macro precision score: 0.6811594202898551
+Micro precision score: 0.5753424657534246
+Macro f1 score: 0.44283589879949975
+Micro f1 score: 0.5753424657534246
+
+JPM:
+Macro precision score: 0.5740600133632995
+Micro precision score: 0.6
+Macro f1 score: 0.5592370806590352
+Micro f1 score: 0.6
+
+DAL:
+Macro precision score: 0.23424657534246576
+Micro precision score: 0.4684931506849315
+Macro f1 score: 0.31902985074626866
+Micro f1 score: 0.4684931506849315
