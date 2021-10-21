@@ -4,7 +4,7 @@ numpy
 mysql
 matplotlib
 seaborn
-statsmodels
 scipy
+statsmodels
 arch
 sklearn
