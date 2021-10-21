@@ -91,7 +91,7 @@ for symbol in symbol_list.Symbol:
         q = top_models[0]['params']['q']
 
         rolling_predictions = []
-        test_size = 365
+        test_size = round(len(symbol_df) * 0.2)
         for i in range(test_size):
             train = symbol_df['pct_change'][:-(test_size-i)]
             model = arch_model(symbol_df['pct_change'], p = p, q = q, mean = 'constant', vol = 'GARCH', dist = 'normal')
