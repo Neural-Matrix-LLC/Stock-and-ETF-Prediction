@@ -45,3 +45,51 @@ Macro precision score: 0.23424657534246576
 Micro precision score: 0.4684931506849315
 Macro f1 score: 0.31902985074626866
 Micro f1 score: 0.4684931506849315
+
+DKNG:
+Macro precision score: 0.33166666666666667
+Micro precision score: 0.6633333333333333
+Macro f1 score: 0.39879759519038077
+Micro f1 score: 0.6633333333333333
+
+USB:
+Macro precision score: 0.6321744933867249
+Micro precision score: 0.6109589041095891
+Macro f1 score: 0.6025794381057539
+Micro f1 score: 0.6109589041095891
+
+WFC:
+Macro precision score: 0.5172867412732528
+Micro precision score: 0.4465753424657534
+Macro f1 score: 0.4443690842225839
+Micro f1 score: 0.4465753424657534
+
+BMY:
+Macro precision score: 0.5269794721407625
+Micro precision score: 0.7808219178082192
+Macro f1 score: 0.5285455954533712
+Micro f1 score: 0.7808219178082192
+
+CSCO:
+Macro precision score: 0.5903249120160885
+Micro precision score: 0.6547945205479452
+Macro f1 score: 0.5764257294429709
+Micro f1 score: 0.6547945205479452
+
+PFE:
+Macro precision score: 0.5750203809382644
+Micro precision score: 0.6986301369863014
+Macro f1 score: 0.5782563025210083
+Micro f1 score: 0.6986301369863014
+
+T:
+Macro precision score: 0.563087544065805
+Micro precision score: 0.7780821917808219
+Macro f1 score: 0.569707025280531
+Micro f1 score: 0.7780821917808218
+
+BA:
+Macro precision score: 0.5664523043944265
+Micro precision score: 0.4958904109589041
+Macro f1 score: 0.4465321729957806
+Micro f1 score: 0.4958904109589041
