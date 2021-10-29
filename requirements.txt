@@ -8,3 +8,5 @@ scipy
 statsmodels
 arch
 sklearn
+keras
+tensorflow
