@@ -1,3 +1,7 @@
+# Environment variables
+from dotenv import load_dotenv
+load_dotenv("../mysql.env") #Check path for env variables
+
 import os
 import sys
 import mysql.connector
@@ -22,3 +26,4 @@ except Exception as e:
     conn.close()
     print(str(e))
     
+df = histdailyprice.copy()
