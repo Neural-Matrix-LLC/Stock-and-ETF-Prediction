@@ -1,7 +1,6 @@
-dotenv
 pandas
 numpy
-mysql
+mysql-connector-python
 matplotlib
 seaborn
 scipy
