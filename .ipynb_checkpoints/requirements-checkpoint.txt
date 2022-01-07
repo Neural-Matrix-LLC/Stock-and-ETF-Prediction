@@ -11,4 +11,3 @@ sklearn
 keras
 tensorflow
 ta
-git+https://github.com/RJT1990/pyflux
