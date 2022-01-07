@@ -10,3 +10,5 @@ arch
 sklearn
 keras
 tensorflow
+git
+git+https://github.com/RJT1990/pyflux
