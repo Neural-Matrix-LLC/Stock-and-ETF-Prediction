@@ -8,7 +8,6 @@ scipy
 statsmodels
 arch
 sklearn
-keras
-tensorflow
+keras==2.6.0
+tensorflow==2.6.0
 git
-git+https://github.com/RJT1990/pyflux
