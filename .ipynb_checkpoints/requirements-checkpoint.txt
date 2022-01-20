@@ -8,6 +8,7 @@ scipy
 statsmodels
 arch
 sklearn
-keras==2.6.0
-tensorflow==2.6.0
+keras==2.7.0
+tensorflow==2.7.0
 git
+keras-tuner
