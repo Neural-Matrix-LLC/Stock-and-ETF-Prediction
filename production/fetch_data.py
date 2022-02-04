@@ -1,15 +1,13 @@
-# Environment variables
-from dotenv import load_dotenv
-load_dotenv("../mysql.env") #Check path for env variables
-
 import os
 import sys
 import mysql.connector
+import numpy as np 
+import pandas as pd
 
-HOST=os.environ.get("HOST")
-PORT=os.environ.get("PORT")
-USER=os.environ.get("USER")
-PASSWORD=os.environ.get("PASSWORD")
+HOST="143.244.188.157"
+PORT="3306"
+USER="patrick-finProj"
+PASSWORD="Pat#21$rick"
 
 try: 
     conn = mysql.connector.connect(

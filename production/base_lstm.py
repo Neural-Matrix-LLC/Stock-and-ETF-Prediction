@@ -1,12 +1,20 @@
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout,LSTM
+import numpy as np 
+import pandas as pd
 import keras_tuner
 from tensorflow.keras import layers
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout,LSTM
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from datetime import datetime
+from sklearn.preprocessing import MinMaxScaler
+
+
+# Normalize Data
+scaler = MinMaxScaler(feature_range = (0,1))
+scaled_data = scaler.fit_transform(df["Close"].values.reshape(-1, 1))
 
 # Train-Test Split
-def create_dataset(dataset, time_step=1):
+def create_dataset(dataset, time_step = 1):
     x_data, y_data = [], []
     
     for i in range(len(dataset) - time_step - 1):
