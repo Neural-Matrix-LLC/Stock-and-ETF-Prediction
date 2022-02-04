@@ -9,6 +9,11 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from sklearn.metrics import mean_squared_error as mse
+import logging
+# Python Files
+import data
+
+df = data.get_df()
 
 # Processing
 returns = 100 * df['Close'].pct_change().dropna()
@@ -16,7 +21,8 @@ n = int(len(returns)*0.4)
 split_date = returns[-n:].index
 
 # GARCH
-def best_GARCH():
+def best_garch():
+    logging.info(f'{name} Tune GARCH.')
     bic_garch = []
     for p in range(1, 5):
         for q in range(1, 5):
@@ -27,11 +33,12 @@ def best_GARCH():
     garch = arch_model(returns, mean='zero', vol='GARCH',
                     p=best_param[0], o=0, q=best_param[1]).fit(disp='off')
     return garch
-garch = best_GARCH()
+garch = best_garch()
 forecast_garch = garch.forecast(start=split_date[0])
 
 # GJR GARCH
-def best_GJR_GARCH():
+def best_gjr_garch():
+    logging.info(f'{name} Tune GJR GARCH.')
     bic_gjr_garch = []
     for p in range(1, 5):
         for q in range(1, 5):
@@ -41,12 +48,12 @@ def best_GJR_GARCH():
                  best_param = p, q
     gjrgarch = arch_model(returns, mean='zero', p=best_param[0], o=1, q=best_param[1]).fit(disp='off')
     return gjrgarch
-gjrgarch = best_GJR_GARCH()
+gjrgarch = best_gjr_garch()
 forecast_gjrgarch = gjrgarch.forecast(start=split_date[0])
 
-def best_EGARCH():
+def best_egarch():
+    logging.info(f'{name} Tune EGARCH.')
     bic_egarch = []
-
     for p in range(1, 5):
         for q in range(1, 5):
             egarch = arch_model(returns, mean='zero', vol='EGARCH', p=p, q=q).fit(disp='off')
@@ -55,7 +62,7 @@ def best_EGARCH():
                 best_param = p, q
     egarch = arch_model(returns, mean='zero', vol='EGARCH', p=best_param[0], q=best_param[1]).fit(disp='off')
     return egarch
-egarch = best_EGARCH()
+egarch = best_egarch()
 forecast_egarch = egarch.forecast(start=split_date[0])
 
 # Compute realized volatility

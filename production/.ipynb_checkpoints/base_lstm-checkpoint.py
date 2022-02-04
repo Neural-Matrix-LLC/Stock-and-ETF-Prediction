@@ -7,6 +7,11 @@ from tensorflow.keras.layers import Dense, Dropout,LSTM
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
+import logging
+# Python Files
+import data
+
+df = data.get_df()
 
 
 # Normalize Data

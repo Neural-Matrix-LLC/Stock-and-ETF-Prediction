@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import logging
 
+logging.info(f'{name} Fetch data.')
+
 HOST="143.244.188.157"
 PORT="3306"
 USER="patrick-finProj"
