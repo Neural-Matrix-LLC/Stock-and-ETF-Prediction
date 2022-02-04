@@ -1,0 +1,9 @@
+python==3.8.12
+pandas==1.3.3
+numpy==1.19.5
+mysql-connector-python==8.0.26
+sklearn
+scipy
+arch==5.0.1
+tensorflow==2.7.0
+keras-tuner==1.1.0
