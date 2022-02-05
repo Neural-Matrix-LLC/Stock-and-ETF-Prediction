@@ -5,11 +5,6 @@ import numpy as np
 import pandas as pd
 import logging
 
-HOST="143.244.188.157"
-PORT="3306"
-USER="patrick-finProj"
-PASSWORD="Pat#21$rick"
-
 def get_df(stock_symbol, host, port, user, password):
     logging.info(f'{name} Start get_df()')
     try: 

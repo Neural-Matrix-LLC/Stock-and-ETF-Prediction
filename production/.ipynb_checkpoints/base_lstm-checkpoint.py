@@ -8,11 +8,6 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLRO
 from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 import logging
-# Python Files
-import data
-
-df = data.get_df()
-
 
 # Normalize Data
 scaler = MinMaxScaler(feature_range = (0,1))
