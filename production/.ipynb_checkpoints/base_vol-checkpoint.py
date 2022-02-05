@@ -12,8 +12,7 @@ from sklearn.metrics import mean_squared_error as mse
 import logging
 # Python Files
 import data
-
-df = data.get_df()
+df = data.get_df(stock_symbol)
 
 # Processing
 returns = 100 * df['Close'].pct_change().dropna()
@@ -83,9 +82,13 @@ realized_vol = realized_vol.dropna().reset_index()
 realized_vol.drop('index', axis=1, inplace=True)
 
 # Linear SVR
-svr_lin = SVR(kernel='linear')
-para_grid = {'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
-clf = RandomizedSearchCV(svr_lin, para_grid, n_jobs=8)
+def tune svr_lin():
+    logging.info(f'{name} Tune Linear SVR.')
+    svr_lin = SVR(kernel='linear')
+    para_grid = {'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
+    clf = RandomizedSearchCV(svr_lin, para_grid, n_jobs=8)
+    return clf
+svr_lin = tune_svr_lin 
 clf.fit(X.iloc[:-n].values, realized_vol.iloc[1:-(n-1)].values.reshape(-1,))
 predict_svr_lin = clf.predict(X.iloc[-n:])
 predict_svr_lin = pd.DataFrame(predict_svr_lin)
@@ -137,7 +140,7 @@ DL_predict.index = returns.iloc[-n:].index
 forecast_garch
 forecast_gjrgarch
 forecast_egarch
-predict_svr_lin
+predict_svr_linear
 predict_svr_rbf
 NN_predictions
 DL_predict

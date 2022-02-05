@@ -12,8 +12,7 @@ from sklearn.metrics import mean_squared_error as mse
 import logging
 # Python Files
 import data
-
-df = data.get_df()
+df = data.get_df(stock_symbol)
 
 # Processing
 returns = 100 * df['Close'].pct_change().dropna()
@@ -141,7 +140,7 @@ DL_predict.index = returns.iloc[-n:].index
 forecast_garch
 forecast_gjrgarch
 forecast_egarch
-predict_svr_lin
+predict_svr_linear
 predict_svr_rbf
 NN_predictions
 DL_predict
