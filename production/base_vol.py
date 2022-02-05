@@ -21,7 +21,7 @@ n = int(len(returns)*0.4)
 split_date = returns[-n:].index
 
 # GARCH
-def best_garch():
+def tune_garch():
     logging.info(f'{name} Tune GARCH.')
     bic_garch = []
     for p in range(1, 5):
@@ -33,11 +33,11 @@ def best_garch():
     garch = arch_model(returns, mean='zero', vol='GARCH',
                     p=best_param[0], o=0, q=best_param[1]).fit(disp='off')
     return garch
-garch = best_garch()
+garch = tune_garch()
 forecast_garch = garch.forecast(start=split_date[0])
 
 # GJR GARCH
-def best_gjr_garch():
+def tune_gjr_garch():
     logging.info(f'{name} Tune GJR GARCH.')
     bic_gjr_garch = []
     for p in range(1, 5):
@@ -48,10 +48,10 @@ def best_gjr_garch():
                  best_param = p, q
     gjrgarch = arch_model(returns, mean='zero', p=best_param[0], o=1, q=best_param[1]).fit(disp='off')
     return gjrgarch
-gjrgarch = best_gjr_garch()
+gjrgarch = tune_gjr_garch()
 forecast_gjrgarch = gjrgarch.forecast(start=split_date[0])
 
-def best_egarch():
+def tune_egarch():
     logging.info(f'{name} Tune EGARCH.')
     bic_egarch = []
     for p in range(1, 5):
@@ -62,7 +62,7 @@ def best_egarch():
                 best_param = p, q
     egarch = arch_model(returns, mean='zero', vol='EGARCH', p=best_param[0], q=best_param[1]).fit(disp='off')
     return egarch
-egarch = best_egarch()
+egarch = tune_egarch()
 forecast_egarch = egarch.forecast(start=split_date[0])
 
 # Compute realized volatility
@@ -83,9 +83,13 @@ realized_vol = realized_vol.dropna().reset_index()
 realized_vol.drop('index', axis=1, inplace=True)
 
 # Linear SVR
-svr_lin = SVR(kernel='linear')
-para_grid = {'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
-clf = RandomizedSearchCV(svr_lin, para_grid, n_jobs=8)
+def tune svr_lin():
+    logging.info(f'{name} Tune Linear SVR.')
+    svr_lin = SVR(kernel='linear')
+    para_grid = {'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
+    clf = RandomizedSearchCV(svr_lin, para_grid, n_jobs=8)
+    return clf
+svr_lin = tune_svr_lin 
 clf.fit(X.iloc[:-n].values, realized_vol.iloc[1:-(n-1)].values.reshape(-1,))
 predict_svr_lin = clf.predict(X.iloc[-n:])
 predict_svr_lin = pd.DataFrame(predict_svr_lin)
