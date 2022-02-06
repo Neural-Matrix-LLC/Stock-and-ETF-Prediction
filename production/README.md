@@ -1,5 +1,6 @@
 # Folder structure
 
+```
 ├── production
 │   ├── controller
 │   │   ├── **/*.css
@@ -17,3 +18,4 @@
 ├── package.json
 ├── requirements.txt
 └── .gitignore
+```
