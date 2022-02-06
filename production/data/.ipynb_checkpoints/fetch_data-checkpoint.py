@@ -6,7 +6,7 @@ import pandas as pd
 import logging
 
 def get_df(stock_symbol, host, port, user, password):
-    logging.info(f'{name} Start get_df()')
+    logging.info(f'Fetch data.')
     try: 
         conn = mysql.connector.connect(
             host,

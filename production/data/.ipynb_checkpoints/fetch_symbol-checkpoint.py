@@ -1,12 +1,12 @@
-import os
-import sys
-import mysql.connector
 import numpy as np 
 import pandas as pd
 import logging
 
-def get_df(stock_symbol, host, port, user, password):
-    logging.info(f'Fetch data.')
+stock_list = pd.read_csv("../stocks_and_etfs/stock_list.csv")
+etf_list = pd.read_csv("../stocks_and_etfs/etf_list.csv")
+
+def get_stock(stock_symbol, host, port, user, password):
+    logging.info(f'Fetch symbol.')
     try: 
         conn = mysql.connector.connect(
             host,
@@ -20,6 +20,6 @@ def get_df(stock_symbol, host, port, user, password):
         conn.close()
     except Exception as e:
         conn.close()
-        logging.error("Exception occurred at get_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
         
-    return histdailyprice
+    return stock_symbol
