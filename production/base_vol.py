@@ -8,11 +8,7 @@ from sklearn.neural_network import MLPRegressor
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-from sklearn.metrics import mean_squared_error as mse
 import logging
-# Python Files
-import data
-df = data.get_df(stock_symbol)
 
 # Processing
 returns = 100 * df['Close'].pct_change().dropna()
