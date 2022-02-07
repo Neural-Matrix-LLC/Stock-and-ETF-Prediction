@@ -3,6 +3,19 @@ import pandas as pd
 from arch import arch_model
 import logging
 
+def tune_egarch():
+    logging.info(f'Tune EGARCH.')
+    bic_egarch = []
+    for p in range(1, 5):
+        for q in range(1, 5):
+            egarch = arch_model(returns, mean='zero', vol='EGARCH', p=p, q=q).fit(disp='off')
+            bic_egarch.append(egarch.bic)
+            if egarch.bic == np.min(bic_egarch):
+                best_param = p, q
+    egarch = arch_model(returns, mean='zero', vol='EGARCH', p=best_param[0], q=best_param[1]).fit(disp='off')
+    return egarch
+
+
 # GJR GARCH
 def gjrgarch(returns, P=1, Q=1, tune=True):
     if tune:

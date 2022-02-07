@@ -17,7 +17,7 @@ split_date = returns[-n:].index
 
 # GARCH
 def tune_garch():
-    logging.info(f'{name} Tune GARCH.')
+    logging.info(f'Tune GARCH.')
     bic_garch = []
     for p in range(1, 5):
         for q in range(1, 5):
@@ -33,7 +33,7 @@ forecast_garch = garch.forecast(start=split_date[0])
 
 # GJR GARCH
 def tune_gjr_garch():
-    logging.info(f'{name} Tune GJR GARCH.')
+    logging.info(f'Tune GJR GARCH.')
     bic_gjr_garch = []
     for p in range(1, 5):
         for q in range(1, 5):
@@ -47,7 +47,7 @@ gjrgarch = tune_gjr_garch()
 forecast_gjrgarch = gjrgarch.forecast(start=split_date[0])
 
 def tune_egarch():
-    logging.info(f'{name} Tune EGARCH.')
+    logging.info(f'Tune EGARCH.')
     bic_egarch = []
     for p in range(1, 5):
         for q in range(1, 5):

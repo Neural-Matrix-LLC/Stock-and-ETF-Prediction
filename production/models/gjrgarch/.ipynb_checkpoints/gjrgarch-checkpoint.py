@@ -3,7 +3,7 @@ import pandas as pd
 from arch import arch_model
 import logging
 
-# GARCH
+# GJR GARCH
 def gjrgarch(returns, P=1, Q=1, tune=True):
     if tune:
         logging.info(f'Tune GJR GARCH.')
