@@ -3,7 +3,7 @@ import pandas as pd
 from arch import arch_model
 import logging
 
-# GJR GARCH
+# GJR-GARCH
 def gjrgarch(returns, P=1, Q=1, tune=True):
     if tune:
         logging.info(f'Tune GJR GARCH.')
@@ -15,9 +15,9 @@ def gjrgarch(returns, P=1, Q=1, tune=True):
                 if gjrgarch.bic == np.min(bic_gjr_garch):
                      best_param = p, q
         gjrgarch = arch_model(returns, mean='zero', p=best_param[0], o=1, q=best_param[1]).fit(disp='off')
-        logging.info(f'GJR GARCH({best_param[0]}, {best_param[0]}).')
+        logging.info(f'Compile GJR-GARCH({best_param[0]}, {best_param[0]}).')
         return gjrgarch
    
     gjrgarch = arch_model(returns, mean='zero', vol='GARCH', p=P, o=0, q=Q).fit(disp='off')
-    logging.info(f'GJR GARCH({P}, {Q}).')
+    logging.info(f'Compile GJR-GARCH({P}, {Q}).')
     return gjrgarch

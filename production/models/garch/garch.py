@@ -15,9 +15,9 @@ def garch(returns, P=1, Q=1, tune=True):
                 if garch.bic == np.min(bic_garch):
                     best_param = p, q
         garch = arch_model(returns, mean='zero', vol='GARCH', p=best_param[0], o=0, q=best_param[1]).fit(disp='off')
-        logging.info(f'GARCH({best_param[0]}, {best_param[0]}).')
+        logging.info(f'Compile GARCH({best_param[0]}, {best_param[0]}).')
         return garch
    
     garch = arch_model(returns, mean='zero', vol='GARCH', p=P, o=0, q=Q).fit(disp='off')
-    logging.info(f'GARCH({P}, {Q}).')
+    logging.info(f'Compile GARCH({P}, {Q}).')
     return garch
