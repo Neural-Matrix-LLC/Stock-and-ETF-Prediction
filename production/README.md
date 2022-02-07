@@ -8,22 +8,14 @@
 │   ├── fetch_data.py
 │   ├── fetch_symbol.py
 ├── model
-│   ├── garch
-│   │   ├── garch.py
-│   ├── egarch
-│   │   ├── egarch.py
-│   ├── gjrgarch
-│   │   ├── gjrgarch.py
-│   ├── svr_linear
-│   │   ├── svr_linear.py
-│   ├── svr_rbf
-│   │   ├── svr_rbf.py
-│   ├── NN_vol
-│   │   ├── NN_vol.py
-│   ├── DL_vol
-│   │   ├── DL_vol.py
-│   ├── lstm
-│   │   ├── lstm.py
+│   ├── garch.py
+│   ├── egarch.py
+│   ├── gjrgarch.py
+│   ├── svr_linear.py
+│   ├── svr_rbf.py
+│   ├── NN_vol.py
+│   ├── DL_vol.py
+│   ├── lstm.py
 ├── output
 │   ├── **/*.csv
 ├── main.py
