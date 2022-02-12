@@ -78,7 +78,7 @@ realized_vol = realized_vol.dropna().reset_index()
 realized_vol.drop('index', axis=1, inplace=True)
 
 # Linear SVR
-def tune svr_lin():
+def tune_svr_lin():
     logging.info(f'{name} Tune Linear SVR.')
     svr_lin = SVR(kernel='linear')
     para_grid = {'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
