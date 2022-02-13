@@ -40,7 +40,7 @@ def build_model(hp):
     model = Sequential()
     model.add(layers.LSTM(units = hp.Choice('layer1_units', [10,20,30,40,50,60,70,80,90,100]), 
                           return_sequences=True, 
-                          input_shape=(X_train.shape[1],1)))
+                          input_shape=(100,1)))
     for i in range(hp.Int('num_layers', 2, 15)):                        
         model.add(layers.LSTM(units =  hp.Int('units' + str(i), min_value=10, max_value=150, step=10), return_sequences=True))
     
