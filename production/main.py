@@ -16,7 +16,7 @@ def main():
     logging.info(f'Loop through symbols')
     for symbol in symbols:
         data = data.fetch_df(symbol, host, port, user, password)
-        processing.
+        df["Close"]
     
 
     

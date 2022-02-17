@@ -1,4 +1,4 @@
-import logging
+ import logging
 from datetime import date
 from data import data, processing
 from model import garch, gjrgarch, egarch, svr_linear, svr_rbf, NN_vol, DL_vol, lstm
@@ -16,7 +16,7 @@ def main():
     logging.info(f'Loop through symbols')
     for symbol in symbols:
         data = data.fetch_df(symbol, host, port, user, password)
-        processing.
+        df["Close"]
     
 
     
