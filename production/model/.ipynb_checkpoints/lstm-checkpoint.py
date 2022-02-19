@@ -64,10 +64,13 @@ def keras_tuner():
 
 # LSTM prediction    
 def lstm(stock_symbol, close):
-    scaler, scaled_data = normalize(close)
-    X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
-    model = keras_tuner()
-    model.save(f"saved_lstm/{stock_symbol}_lstm.h5")
-    scaled_predict = model.predict(X_train)
-    predict = scaler.inverse_transform(scaled_predict)
-    return predict
+    try:
+        scaler, scaled_data = normalize(close)
+        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
+        model = keras_tuner()
+        model.save(f"saved_lstm/{stock_symbol}_lstm.h5")
+        scaled_predict = model.predict(X_train)
+        predict = scaler.inverse_transform(scaled_predict)
+        return predict
+    except Exception as e:
+        print("calc_model:{}".format(e))
