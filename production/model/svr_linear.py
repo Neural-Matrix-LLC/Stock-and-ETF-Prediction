@@ -17,12 +17,3 @@ clf.fit(X.iloc[:-n].values, realized_vol.iloc[1:-(n-1)].values.reshape(-1,))
 predict_svr_lin = clf.predict(X.iloc[-n:])
 predict_svr_lin = pd.DataFrame(predict_svr_lin)
 predict_svr_lin.index = returns.iloc[-n:].index
-
-# RBF SVR
-svr_rbf = SVR(kernel='rbf')
-para_grid ={'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
-clf = RandomizedSearchCV(svr_rbf, para_grid, n_jobs=8)
-clf.fit(X.iloc[:-n].values, realized_vol.iloc[1:-(n-1)].values.reshape(-1,))
-predict_svr_rbf = clf.predict(X.iloc[-n:])
-predict_svr_rbf = pd.DataFrame(predict_svr_rbf)
-predict_svr_rbf.index = returns.iloc[-n:].index

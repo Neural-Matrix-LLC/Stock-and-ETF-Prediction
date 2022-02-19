@@ -63,7 +63,7 @@ def keras_tuner():
     return model
 
 # LSTM prediction    
-def lstm(stock_symbol, close):
+def predict(stock_symbol, close):
     try:
         scaler, scaled_data = normalize(close)
         X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)

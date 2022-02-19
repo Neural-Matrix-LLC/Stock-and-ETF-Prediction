@@ -42,7 +42,7 @@ def load_df(stock_symbol, host, port, user, password):
                 password,
                 database="GlobalMarketData"
             )
-            query = f"SELECT Date, Close, Open, High, Low, Volume from histdailyprice3 WHERE Symbol='{stock_symbol}';"
+            query = f"SELECT Date, Exchange, Close, Open, High, Low, Volume from histdailyprice3 WHERE Symbol='{stock_symbol}';"
             histdailyprice3 = pd.read_sql(query, conn)
             conn.close()
             df = histdailyprice3.copy()

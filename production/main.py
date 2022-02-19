@@ -10,13 +10,6 @@ port="3306"
 user="patrick-finProj"
 password="Pat#21$rick"
 
-def returns(symbol, close, ):
-    logging.info(f'Generate returns')
-    returns = 100 * close.pct_change().dropna()
-    n = int(len(returns)*0.01)
-    split_date = returns[-n:].index
-    return returns, n, split_date
-
 def main():
     logging.info(f'Start main.py')
     symbols = data.load_symbols()
@@ -24,13 +17,28 @@ def main():
     for symbol in symbols:
         logging.info(f'Generate predictions for {symbol}')
         df = data.load_df(symbol, host, port, user, password)
+        exchange = df.Exchange.iloc[0]
+        
+        # Data Processing
         close = df["Close"]
-        lstm_predict = lstm(symbol, close)
-    
+        returns = processing.returns(close)
+        realized_vol, X = processing.realized_vol(returns, rolling=5)
+        
+        
+        # Predictions
+        garch_predict = None
+        gjr_predict = None
+        egarch_predict = None
+        svr_linear_predict = None
+        svr_rbf_predict = None
+        NN_predict = None
+        DL_predict = None
+        lstm_predict = lstm.predict(symbol, close)
+        
         ouptput_dict = {
             "Date": date.now(),
             "Symbol": symbol,
-            "Exchange": None,
+            "Exchange": exchange,
             "garch": garch_predict,
             "gjrgarch": gjr_predict,
             "egarch": egarch_predict,
