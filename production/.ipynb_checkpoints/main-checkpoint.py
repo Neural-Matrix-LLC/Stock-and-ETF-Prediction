@@ -10,19 +10,36 @@ port="3306"
 user="patrick-finProj"
 password="Pat#21$rick"
 
+def returns(close, ):
+    logging.info(f'Generate returns')
+    returns = 100 * close.pct_change().dropna()
+    n = int(len(returns)*0.01)
+    split_date = returns[-n:].index
+    return returns, n, split_date
+
 def main():
     logging.info(f'Start main.py')
-    symbols = data.fetch_symbols()
+    symbols = data.load_symbols()
     logging.info(f'Loop through symbols')
     for symbol in symbols:
-        data = data.fetch_df(symbol, host, port, user, password)
-        df["Close"]
+        data = data.load_df(symbol, host, port, user, password)
+        lstm_predict = lstm(symbol, df["Close"])
     
-
-    
-    #output_csv = output.to_csv(f"{date}
-    
-    return output_csv
+        ouptput_dict = {
+            "Date": date.now(),
+            "Symbol": symbol,
+            "Exchange": None,
+            "garch": garch_predict,
+            "gjrgarch": gjr_predict,
+            "egarch": egarch_predict,
+            "svr_linear": svr_linear_predict,
+            "svr_rbf": svr_rbf_predict,
+            "NN": NN_predict,
+            "DL": DL_predict,
+            "LSTM": lstm_predict
+        }
+        output_df = pd.DataFrame(dict)
+        df.to_csv(f'{symbol}_{date.now()}.csv') 
 
 """
 Table: DailyOutputs
