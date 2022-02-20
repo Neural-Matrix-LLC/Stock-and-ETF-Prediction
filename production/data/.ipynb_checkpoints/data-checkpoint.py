@@ -6,14 +6,10 @@ import numpy as np
 import pandas as pd
 import logging
 
-
-#print("Check data file {}..".format(dpath))
-
 def load_symbols():
     """
     Return list of stock symbols.
     """
-    
     try:
         logging.info(f'Fetch symbols.')
         stock_list = pd.read_csv("../stocks_and_etfs/stock_list.csv")
@@ -21,14 +17,13 @@ def load_symbols():
         symbols = list(stock_list.iloc[:,0])
         return symbols       
     except Exception as e:
-        conn.close()
         logging.error("Exception occurred", exc_info=True)
 
 def load_df(stock_symbol, host, port, user, password):
     """
     Return dataframe from histdailyprice3
     """
-    dpath="../data/{}.csv".format(stock_symbol)
+    dpath="../histdailyprice3/{}.csv".format(stock_symbol)
     if path.isfile(dpath):
         logging.info("Load data from {}".format(dpath))
         df = pd.read_csv(dpath)
@@ -47,7 +42,7 @@ def load_df(stock_symbol, host, port, user, password):
             conn.close()
             df = histdailyprice3.copy()
             df.to_csv(dpath, index=False)
-            return histdailyprice
+            return df
         except Exception as e:
             conn.close()
             logging.error("Exception occurred at load_df()", exc_info=True)

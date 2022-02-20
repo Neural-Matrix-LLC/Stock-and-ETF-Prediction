@@ -10,8 +10,7 @@ import logging
 
 # Linear SVR
 def tuned_svr_lin(stock_symbol):
-    logging.info(f'{name} Tune Linear SVR.')
-    
+    logging.info(f'Tune Linear SVR.')
     try:
         if path.isfile(dpath):
             logging.info("Load data from {}".format(dpath))
@@ -28,12 +27,12 @@ def tuned_svr_lin(stock_symbol):
             return clf
     except Exception as e:
     print("calc_model:{}".format(e))
-        
-        svr_lin = tune_svr_lin(stock_symbol)
-clf.fit(X.iloc[:-n].values, realized_vol.iloc[1:-(n-1)].values.reshape(-1,))
-predict_svr_lin = clf.predict(X.iloc[-n:])
-predict_svr_lin = pd.DataFrame(predict_svr_lin)
-predict_svr_lin.index = returns.iloc[-n:].index
-
-
-
+    
+def predict(stock_symbol):
+    logging.info(f'{name} Tune Linear SVR.')
+    svr_lin = tune_svr_lin(stock_symbol)
+    clf.fit(X.iloc[:-n].values, realized_vol.iloc[1:-(n-1)].values.reshape(-1,))
+    predict_svr_lin = clf.predict(X.iloc[-n:])
+    predict_svr_lin = pd.DataFrame(predict_svr_lin)
+    predict_svr_lin.index = returns.iloc[-n:].index
+    return predict_svr_lin

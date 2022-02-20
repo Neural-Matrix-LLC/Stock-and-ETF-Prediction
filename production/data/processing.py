@@ -7,7 +7,7 @@ def returns(close, split=0.01):
     try:
         logging.info(f'Generate returns')
         returns = 100 * close.pct_change().dropna()
-        n = int(len(returns)*plit)
+        n = int(len(returns)*split)
         split_date = returns[-n:].index
         return returns, n, split_date
     except Exception as e:
