@@ -13,9 +13,9 @@ def load_symbols():
     try:
         logging.info(f'Fetch symbols.')
         stock_list = pd.read_csv("../stocks_and_etfs/stock_list.csv")
-        #etf_list = pd.read_csv("../stocks_and_etfs/etf_list.csv")
-        symbols = list(stock_list.iloc[:,0])
-        return symbols       
+        etf_list = pd.read_csv("../stocks_and_etfs/etf_list.csv")
+        symbol_list = stock_list.append(etf_list).rename({"0": "Symbol"}, axis=1).reset_index(drop=True)
+        return symbol_list
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 

@@ -15,9 +15,9 @@ password="Pat#21$rick"
 def main():
     try:
         logging.info(f'Start main.py')
-        symbols = data.load_symbols()
+        symbol_list = data.load_symbols()
         logging.info(f'Loop through symbols')
-        for symbol in symbols:
+        for symbol in symbol_list.Symbol:
             logging.info(f'Generate predictions for {symbol}')
             df = data.load_df(symbol, host, port, user, password)
             exchange = df.Exchange.iloc[0]

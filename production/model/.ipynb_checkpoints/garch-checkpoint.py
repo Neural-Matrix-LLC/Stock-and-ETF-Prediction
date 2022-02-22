@@ -27,27 +27,46 @@ def garch(returns, P=1, Q=1, tune=True):
         logging.error("Exception occurred", exc_info=True)
 
         
+def p_calc_model(data, p, q):
+    res = {}
+    try:
+#         print("calc_model({},{})".format(p, q))
+        model = arch_model(data, vol='GARCH', p=p, q=q, dist='normal')
+#         print("calc_model.model_fit")
+        model_fit = model.fit(disp='off')
+        resid = model_fit.resid
+#         print("calc_model.divide")
+        st_resid = np.divide(resid, model_fit.conditional_volatility)
+        res = evaluate_model(resid, st_resid)
+        res['AIC'] = model_fit.aic
+        res['params']['p'] = p
+        res['params']['q'] = q
+    except Exception as e:
+        print("calc_model:{}".format(e)) 
+    return res
 
+from functools import partial
+from itertools import repeat
+from multiprocessing import Pool, freeze_support
 
-def multi_gridsearch(data, p_rng, q_rng):
+def multip_gridsearch(data, p_rng, q_rng):
     n_sym = len(p_rng)*len(q_rng)
-    logging.info("multi_gridsearch: {} trials.".format(n_sym))
+    print("multi_gridsearch: {} trials.".format(n_sym))
     top_score, top_results = float('inf'), None
     top_models = []
-    threads = [None] * n_sym
-    all_results = [None] * n_sym
+    
     try:
-        i = 0
+        ll=[]
         for p in p_rng:
             for q in q_rng:
-                print("Start {} thread.".format(i))
-                threads[i] = Thread(target=calc_model, args=(data, p, q, all_results, i))
-                threads[i].start()
-                i += 1
-        for i in range(len(threads)):
-            threads[i].join()
-            logging.info("Join {} thread.".format(i))
-        logging.info("All Grid threads Finish.")
+                ll.append((data, p, q))    
+        print("Starting {} threads".format(n_sym))
+#         print(ll)
+        with Pool(processes=num_p) as pool:
+            all_results = pool.starmap(p_calc_model, ll)
+            
+        print("All Grid threads Finish.")
+
         for i in range(len(all_results)):
             results = all_results[i]
             if results['AIC'] < top_score: 
@@ -56,6 +75,6 @@ def multi_gridsearch(data, p_rng, q_rng):
             elif results['LM_pvalue'][1] is False:
                 top_models.append(results)
     except Exception as e:
-        logging.info("multi_gridsearch:{}".format(e))
+        print("multi_gridsearch:{}".format(e))
     top_models.append(top_results)
     return top_models
