@@ -5,6 +5,24 @@ import logging
 from functools import partial
 from itertools import repeat
 from multiprocessing import Pool, freeze_support
+from scipy.stats import shapiro
+from statsmodels.stats.diagnostic import het_arch
+
+def evaluate_model(residuals, st_residuals, lags=50):
+    results = {
+        'LM_pvalue': None,
+        'F_pvalue': None,
+        'SW_pvalue': None,
+        'BIC': None,
+        'params': {'p': None, 'q': None}
+    }
+    arch_test = het_arch(residuals, nlags=lags)
+    shap_test = shapiro(st_residuals)
+    # We want falsey values for each of these hypothesis tests
+    results['LM_pvalue'] = [arch_test[1], arch_test[1] < .05]
+    results['F_pvalue'] = [arch_test[3], arch_test[3] < .05]
+    results['SW_pvalue'] = [shap_test[1], shap_test[1] < .05]
+    return results
 
 def p_calc_model(data, p, q, vol):
     res = {}
