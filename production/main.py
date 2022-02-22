@@ -13,45 +13,49 @@ user="patrick-finProj"
 password="Pat#21$rick"
 
 def main():
+    logging.info(f'Start main.py')
     try:
-        logging.info(f'Start main.py')
         symbol_list = data.load_symbols()
         logging.info(f'Loop through symbols')
         for symbol in symbol_list.Symbol:
             logging.info(f'Generate predictions for {symbol}')
-            df = data.load_df(symbol, host, port, user, password)
-            exchange = df.Exchange.iloc[0]
+            try:
+                df = data.load_df(symbol, host, port, user, password)
+                exchange = df.Exchange.iloc[0]
 
-            # Data Processing
-            close = df["Close"]
-            returns = processing.returns(close)
-            realized_vol, X = processing.realized_vol(returns, rolling=5)
+                # Data Processing
+                logging.info(f'Data processing for {symbol}')
+                close = df["Close"]
+                returns = processing.returns(close)
+                realized_vol, X = processing.realized_vol(returns, rolling=5)
 
-            # Predictions
-            garch_predict = garch.predict(symbol)
-            gjrgarch_predict = gjrgarch.predict(symbol)
-            egarch_predict = egarch.predict(symbol)
-            svr_linear_predict = svr_linear.predict(symbol)
-            svr_rbf_predict = svr_rbf.predict(symbol)
-            NN_vol_predict = NN_vol.predict(symbol)
-            DL_vol_predict = DL_vol.predict(symbol)
-            lstm_predict = lstm.predict(symbol, close)
+                # Predictions
+                garch_predict = garch.predict(symbol)
+                gjrgarch_predict = gjrgarch.predict(symbol)
+                egarch_predict = egarch.predict(symbol)
+                svr_linear_predict = svr_linear.predict(symbol)
+                svr_rbf_predict = svr_rbf.predict(symbol)
+                NN_vol_predict = NN_vol.predict(symbol)
+                DL_vol_predict = DL_vol.predict(symbol)
+                lstm_predict = lstm.predict(symbol, close)
 
-            ouptput_dict = {
-                "Date": date.now(),
-                "Symbol": symbol,
-                "Exchange": exchange,
-                "garch": garch_predict,
-                "gjrgarch": gjrgarch_predict,
-                "egarch": egarch_predict,
-                "svr_linear": svr_linear_predict,
-                "svr_rbf": svr_rbf_predict,
-                "NN_vol": NN_vol_predict,
-                "DL_vol": DL_vol_predict,
-                "LSTM": lstm_predict
-            }
-            output_df = pd.DataFrame(dict)
-            df.to_csv(f'output/{symbol}_{date.now()}.csv')
+                ouptput_dict = {
+                    "Date": date.now(),
+                    "Symbol": symbol,
+                    "Exchange": exchange,
+                    "garch": garch_predict,
+                    "gjrgarch": gjrgarch_predict,
+                    "egarch": egarch_predict,
+                    "svr_linear": svr_linear_predict,
+                    "svr_rbf": svr_rbf_predict,
+                    "NN_vol": NN_vol_predict,
+                    "DL_vol": DL_vol_predict,
+                    "LSTM": lstm_predict
+                }
+                output_df = pd.DataFrame(dict)
+                df.to_csv(f'output/{symbol}_{date.now()}.csv')
+            except Exception as e:
+                logging.error("Exception occurred", exc_info=True)
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 

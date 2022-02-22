@@ -25,11 +25,14 @@ def load_df(stock_symbol, host, port, user, password):
     """
     dpath="../histdailyprice3/{}.csv".format(stock_symbol)
     if path.isfile(dpath):
-        logging.info("Load data from {}".format(dpath))
-        df = pd.read_csv(dpath)
+        try:
+            logging.info("Load data from {}".format(dpath))
+            df = pd.read_csv(dpath)
+        except Exception as e:
+            logging.error("Exception occurred at load_df()", exc_info=True)
     else:
+        logging.info(f'Load data from MySQL.')
         try: 
-            logging.info(f'Load data from MySQL.')
             conn = mysql.connector.connect(
                 host,
                 port,
@@ -44,5 +47,4 @@ def load_df(stock_symbol, host, port, user, password):
             df.to_csv(dpath, index=False)
             return df
         except Exception as e:
-            conn.close()
             logging.error("Exception occurred at load_df()", exc_info=True)
