@@ -7,6 +7,16 @@ from scipy.stats import shapiro
 from statsmodels.stats.diagnostic import het_arch
 from sklearn.metrics import precision_score, f1_score
 
+
+# Generate returns for Volatiltiy models
+def data(close, split=0.01):
+    try:
+        logging.info(f'Generate returns')
+        returns = 100 * close.pct_change().dropna()
+        return returns
+    except Exception as e:
+        logging.error("Exception occurred at load_df()", exc_info=True)
+
 def evaluate_model(residuals, st_residuals, lags=50):
     results = {
         'LM_pvalue': None,
@@ -89,7 +99,6 @@ def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list,
     return top_models
 
 def tune(data):
-    
     # Parameters
     num_p = 10
     mean_list = ['Constant', 'Zero', 'LS', 'AR', 'ARX', 'HARX']
@@ -97,14 +106,11 @@ def tune(data):
     p_rng = range(0,20)
     o_rng = range(0,20)
     q_rng = range(0,20)
-    
     dist_list = ['normal', 't', 'skewt', 'ged']
-
     try:
         logging.info("Start GARCH Process")
         top_models = multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list, num_p)
         logging.info("Top model={}".format(top_models))
-
         # Best parameters
         mean = top_models[0]['params']['mean']
         vol = top_models[0]['params']['vol']
@@ -112,6 +118,13 @@ def tune(data):
         o = top_models[0]['params']['o']
         q = top_models[0]['params']['q']
         dist = top_models[0]['params']['dist']
+        arch_model = arch_model(data, mean=mean, vol=vol, p=p, o=o, q=q, dist=dist)
+        return arch_model
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)
+
+
+
 
         rolling_predictions = []
         test_size = round(len(symbol_df) * 0.2)
