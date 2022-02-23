@@ -30,9 +30,10 @@ def main():
                 realized_vol, X = processing.realized_vol(returns, rolling=5)
 
                 # Predictions
-                garch_predict = garch.predict(symbol)
+                garch_predict = garch.predict(data, p, q, o=0, vol='GARCH')
                 gjrgarch_predict = gjrgarch.predict(symbol)
                 egarch_predict = egarch.predict(symbol)
+
                 svr_linear_predict = svr_linear.predict(symbol)
                 svr_rbf_predict = svr_rbf.predict(symbol)
                 NN_vol_predict = NN_vol.predict(symbol)
