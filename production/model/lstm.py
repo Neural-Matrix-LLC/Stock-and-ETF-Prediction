@@ -18,7 +18,7 @@ def normalize(close):
         logging.error("Exception occurred at load_df()", exc_info=True)
         
 # test-train split
-def create_dataset(dataset, time_step=1):
+def create_dataset(dataset, time_step):
     try:
         x_data, y_data = [], []
         for i in range(len(dataset)-time_step-1):
