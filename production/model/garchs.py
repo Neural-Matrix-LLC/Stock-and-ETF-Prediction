@@ -18,28 +18,31 @@ def data(close, split=0.01):
         logging.error("Exception occurred at load_df()", exc_info=True)
 
 def evaluate_model(residuals, st_residuals, lags=50):
-    results = {
-        'LM_pvalue': None,
-        'F_pvalue': None,
-        'SW_pvalue': None,
-        'AIC': None,
-        'BIC': None,
-        'params': {
-            'mean': None,
-            'vol': None,
-            'p': None,
-            'o': None,
-            'q': None,
-            'dist': None
-            }
-    }
-    arch_test = het_arch(residuals, nlags=lags)
-    shap_test = shapiro(st_residuals)
-    # We want falsey values for each of these hypothesis tests
-    results['LM_pvalue'] = [arch_test[1], arch_test[1] < .05]
-    results['F_pvalue'] = [arch_test[3], arch_test[3] < .05]
-    results['SW_pvalue'] = [shap_test[1], shap_test[1] < .05]
-    return results
+    try:
+        results = {
+            'LM_pvalue': None,
+            'F_pvalue': None,
+            'SW_pvalue': None,
+            'AIC': None,
+            'BIC': None,
+            'params': {
+                'mean': None,
+                'vol': None,
+                'p': None,
+                'o': None,
+                'q': None,
+                'dist': None
+                }
+        }
+        arch_test = het_arch(residuals, nlags=lags)
+        shap_test = shapiro(st_residuals)
+        # We want falsey values for each of these hypothesis tests
+        results['LM_pvalue'] = [arch_test[1], arch_test[1] < .05]
+        results['F_pvalue'] = [arch_test[3], arch_test[3] < .05]
+        results['SW_pvalue'] = [shap_test[1], shap_test[1] < .05]
+        return results
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)
 
 def p_calc_model(data, mean, vol, p, q, o, dist):
     res = {}
@@ -60,9 +63,10 @@ def p_calc_model(data, mean, vol, p, q, o, dist):
         res['params']['o'] = o
         res['params']['q'] = q
         res['params']['dist'] = dist
+        return res
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
-    return res
+    
 
 
 def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list, num_p=10):

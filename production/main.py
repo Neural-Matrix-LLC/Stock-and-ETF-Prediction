@@ -3,7 +3,7 @@ import pandas as pd
 import logging
 from datetime import date
 from data import data, processing
-from model import garch, gjrgarch, egarch, svr_linear, svr_rbf, NN_vol, DL_vol, lstm
+from model import garch, gjrgarch, egarch, svr, NN_vol, DL_vol, lstm
 
 logging.basicConfig(filename='logging/app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
@@ -34,8 +34,8 @@ def main():
                 gjrgarch_predict = gjrgarch.predict(symbol)
                 egarch_predict = egarch.predict(symbol)
 
-                svr_linear_predict = svr_linear.predict(symbol)
-                svr_rbf_predict = svr_rbf.predict(symbol)
+                svr_linear_predict = svr.predict(X_train, y_train, X_test, kernel='linear', gamma=None, C=None, epsilon=None)
+                svr_rbf_predict = svr.predict(X_train, y_train, X_test, kernel='rbf', gamma=None, C=None, epsilon=None)
                 NN_vol_predict = NN_vol.predict(symbol)
                 DL_vol_predict = DL_vol.predict(symbol)
                 lstm_predict = lstm.predict(symbol, close)
