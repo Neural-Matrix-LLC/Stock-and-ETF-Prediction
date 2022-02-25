@@ -3,7 +3,7 @@ import pandas as pd
 import logging
 from datetime import date
 from data import data, processing
-from model import garch, gjrgarch, egarch, svr, NN_vol, DL_vol, lstm
+from model import garch, svr, NN_vol, DL_vol, lstm
 
 logging.basicConfig(filename='logging/app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
@@ -29,17 +29,29 @@ def main():
                 returns = processing.returns(close)
                 realized_vol, X = processing.realized_vol(returns, rolling=5)
 
-                
+                # GJR
+                dpath = f"model/params/garch/{stock_symbol}.csv"
+                if path.isfile(dpath):
+                    params = load_csv(dpath)
+                    svr_predict = garch.predict(returns, params)
+                else:
+                    params = garch.tune(X, realized_vol)
+                    svr_predict = garch.predict(returns, params)
+
+                # SVR
+                dpath = f"model/params/svr/{stock_symbol}.csv"
+                if path.isfile(dpath):
+                    params = load_csv(dpath)
+                    svr_predict = svr.predict(X, realized_vol, params)
+                else:
+                    params = svr.tune(X, realized_vol)
+                    svr_predict = svr.predict(X, realized_vol, params)
                 
                 # Predictions
-                garch_predict = garch.predict(data, p, q, o=0, vol='GARCH')
-                gjrgarch_predict = gjrgarch.predict(symbol)
-                egarch_predict = egarch.predict(symbol)
-
-                svr_linear_predict = svr.predict(X_train, y_train, X_test, kernel='linear', gamma=None, C=None, epsilon=None)
-                svr_rbf_predict = svr.predict(X_train, y_train, X_test, kernel='rbf', gamma=None, C=None, epsilon=None)
                 NN_vol_predict = NN_vol.predict(symbol)
                 DL_vol_predict = DL_vol.predict(symbol)
+                
+                # LSTM
                 lstm_predict = lstm.predict(symbol, close)
 
                 ouptput_dict = {
@@ -47,10 +59,7 @@ def main():
                     "Symbol": symbol,
                     "Exchange": exchange,
                     "garch": garch_predict,
-                    "gjrgarch": gjrgarch_predict,
-                    "egarch": egarch_predict,
-                    "svr_linear": svr_linear_predict,
-                    "svr_rbf": svr_rbf_predict,
+                    "svr": svr_predict,
                     "NN_vol": NN_vol_predict,
                     "DL_vol": DL_vol_predict,
                     "LSTM": lstm_predict

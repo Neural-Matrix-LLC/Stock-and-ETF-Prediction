@@ -12,16 +12,16 @@ def tune(X, y):
     try:
         para_grid = {'kernel': ('linear', 'rbf','poly'), 'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
         svr = SVR()
-        clf = RandomizedSearchCV(svr, para_grid, n_jobs=8)
+        clf = RandomizedSearchCV(svr, para_grid, n_jobs=-1)
         clf.fit(X, y)
-        clf.best_params
-        return clf
+        top_params = clf.best_params
+        logging.info(f'Best SVR parameters {top_params}')
+        return top_params
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
     
-def predict(X_train, y_train, X_test, kernel, gamma, C, epsilon):
-    clf = SVR(kernel=kernel, gamma=gamma, C=C, epsilon=epsilon)
-    # X.iloc[:-n].values, realized_vol.iloc[1:-(n-1)].values.reshape(-1,)
+def predict(X_train, y_train, X_test, params):
+    clf = SVR(params)
     clf.fit(X_train, y_train)
     prediction = clf.predict(X_test)
     return prediction
