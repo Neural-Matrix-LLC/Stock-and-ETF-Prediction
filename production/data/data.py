@@ -6,6 +6,14 @@ import numpy as np
 import pandas as pd
 import logging
 
+def load_csv(dpath):
+    try:
+        logging.info(f"Load data from {dpath}")
+        df = pd.read_csv(dpath)
+        return df
+    except Exception as e:
+        logging.error("Exception occurred at load_df()", exc_info=True)
+
 def load_symbols():
     """
     Return list of stock symbols.
@@ -23,13 +31,9 @@ def load_df(stock_symbol, host, port, user, password):
     """
     Return dataframe from histdailyprice3
     """
-    dpath="../histdailyprice3/{}.csv".format(stock_symbol)
+    dpath = f"../histdailyprice3/{stock_symbol}.csv"
     if path.isfile(dpath):
-        try:
-            logging.info("Load data from {}".format(dpath))
-            df = pd.read_csv(dpath)
-        except Exception as e:
-            logging.error("Exception occurred at load_df()", exc_info=True)
+        load_csv(dpath)
     else:
         logging.info(f'Load data from MySQL.')
         try: 

@@ -6,23 +6,15 @@ from scipy.stats import uniform as sp_rand
 from sklearn.model_selection import RandomizedSearchCV
 import logging
 
-#if path.isfile(dpath):
-#    logging.info("Load data from {}".format(dpath))
-#    with open(f'svr_lin/{stock_symbol}.pickle', 'rb') as handle:
-#        clf = pickle.load(handle)
-#    return clf
-
-# with open(f'svr_lin/{stock_symbol}.pickle', 'wb') as handle:
-#    pickle.dump(clf, handle, protocol=pickle.HIGHEST_PROTOCOL)
-#    return clf
-
 # Linear SVR
-def tune(data, kernel):
-    logging.info(f'Tune SVR {kernel}')
+def tune(X, y):
+    logging.info(f'Tune SVR hyperparameters')
     try:
-        svr = SVR(kernel=kernel)
-        para_grid = {'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
+        para_grid = {'kernel': ('linear', 'rbf','poly'), 'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
+        svr = SVR()
         clf = RandomizedSearchCV(svr, para_grid, n_jobs=8)
+        clf.fit(X, y)
+        clf.best_params
         return clf
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)

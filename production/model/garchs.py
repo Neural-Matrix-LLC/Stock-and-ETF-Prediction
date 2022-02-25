@@ -98,7 +98,7 @@ def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list,
             elif results['LM_pvalue'][1] is False:
                 top_models.append(results)
     except Exception as e:
-        logging("multi_gridsearch:{}".format(e))
+        logging.error("Exception occurred at load_df()", exc_info=True)
     top_models.append(top_results)
     return top_models
 
@@ -114,7 +114,7 @@ def tune(data):
     try:
         logging.info("Start GARCH Process")
         top_models = multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list, num_p)
-        logging.info("Top model={}".format(top_models))
+        logging.info(f"Top model={top_models}")
         # Best parameters
         mean = top_models[0]['params']['mean']
         vol = top_models[0]['params']['vol']
@@ -122,8 +122,8 @@ def tune(data):
         o = top_models[0]['params']['o']
         q = top_models[0]['params']['q']
         dist = top_models[0]['params']['dist']
-        arch_model = arch_model(data, mean=mean, vol=vol, p=p, o=o, q=q, dist=dist)
-        return arch_model
+        top_params = {"mean": mean, "vol": vol, "p": p, "o": o, "q": q, "dist": dist}
+        return top_params
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
@@ -132,7 +132,7 @@ def tune(data):
 
         rolling_predictions = []
         test_size = round(len(symbol_df) * 0.2)
-        print("{}'s test size: {}/{}".format(symbol, test_size, len(symbol_df)))
+        #print("{}'s test size: {}/{}".format(symbol, test_size, len(symbol_df)))
         ll=[]
         for i in range(test_size):
             ll.append((symbol_df['pct_change'], i, p, q))

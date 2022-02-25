@@ -29,6 +29,8 @@ def main():
                 returns = processing.returns(close)
                 realized_vol, X = processing.realized_vol(returns, rolling=5)
 
+                
+                
                 # Predictions
                 garch_predict = garch.predict(data, p, q, o=0, vol='GARCH')
                 gjrgarch_predict = gjrgarch.predict(symbol)
@@ -66,11 +68,8 @@ Columns:
 Date date PK 
 Symbol varchar(45) PK 
 Exchange varchar(45) PK 
-forecast_garch float 
-forecast_gjrgarch float 
-forecast_egarch float 
-predict_svr_linear float 
-predict_svr_rbf float 
+predict_garch float 
+predict_svr float 
 NN_predictions float 
 DL_predict float 
 LSTM float
