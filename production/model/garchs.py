@@ -47,7 +47,7 @@ def evaluate_model(residuals, st_residuals, lags=50):
 def p_calc_model(data, mean, vol, p, q, o, dist):
     res = {}
     try:
-        logging.info("calc_model({},{})".format(mean, vol, p, o, q, dist))
+        logging.info(f"calc_model({mean},{vol}, {p}, {o}, {q}, {dist})")
         model = arch_model(data, mean='zero', mean=mean, vol=vol, p=p, o=o, q=q, dist=dist)
         logging.info("calc_model.model_fit")
         model_fit = model.fit(disp='off')
@@ -71,7 +71,7 @@ def p_calc_model(data, mean, vol, p, q, o, dist):
 
 def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list, num_p=10):
     n_sym = len(p_rng) * len(q_rng)
-    logging.info("multi_gridsearch: {} trials.".format(n_sym))
+    logging.info(f"multi_gridsearch: {n_sym} trials.")
     top_score, top_results = float('inf'), None
     top_models = []
     
@@ -84,7 +84,7 @@ def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list,
                         for q in q_rng:
                             for dist in dist_list:
                                 ll.append((data, mean, vol, p, o, q, dist))  
-        logging.info("Starting {} threads".format(n_sym))
+        logging.info(f"Starting {n_sym} threads")
         logging.info(ll)
         with Pool(processes=num_p) as pool:
             all_results = pool.starmap(p_calc_model, ll)
@@ -127,9 +127,8 @@ def tune(data):
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
-
-
-
+def predict():
+    try:
         rolling_predictions = []
         test_size = round(len(symbol_df) * 0.2)
         #print("{}'s test size: {}/{}".format(symbol, test_size, len(symbol_df)))
