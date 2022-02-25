@@ -1,12 +1,9 @@
-from os import path
-import numpy as np
-import pandas as pd
 from sklearn.svm import SVR
 from scipy.stats import uniform as sp_rand
 from sklearn.model_selection import RandomizedSearchCV
 import logging
 
-# Linear SVR
+# Tune SVR
 def tune(X, y):
     logging.info(f'Tune SVR hyperparameters')
     try:
@@ -19,7 +16,8 @@ def tune(X, y):
         return top_params
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
-    
+
+# Predict with SVR using best parameters
 def predict(X_train, y_train, X_test, params):
     clf = SVR(params)
     clf.fit(X_train, y_train)

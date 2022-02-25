@@ -3,7 +3,7 @@ import pandas as pd
 import logging
 from datetime import date
 from data import data, processing
-from model import garch, svr, NN_vol, DL_vol, lstm
+from model import garch, svr, mlp, DL_vol, lstm
 
 logging.basicConfig(filename='logging/app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
@@ -47,8 +47,15 @@ def main():
                     params = svr.tune(X, realized_vol)
                     svr_predict = svr.predict(X, realized_vol, params)
                 
-                # Predictions
-                NN_vol_predict = NN_vol.predict(symbol)
+                # MLP
+                dpath = f"model/params/mlp/{stock_symbol}.csv"
+                if path.isfile(dpath):
+                    params = load_csv(dpath)
+                    svr_predict = mlp.predict(X, realized_vol, params)
+                else:
+                    params = mlp.tune(X, realized_vol)
+                    svr_predict = mlp.predict(X, realized_vol, params)
+                
                 DL_vol_predict = DL_vol.predict(symbol)
                 
                 # LSTM

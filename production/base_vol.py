@@ -5,7 +5,6 @@ from sklearn.svm import SVR
 from scipy.stats import uniform as sp_rand
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.neural_network import MLPRegressor
-import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 import logging
