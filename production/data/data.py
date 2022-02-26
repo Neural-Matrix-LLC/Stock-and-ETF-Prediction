@@ -1,8 +1,5 @@
-import os
 from os import path
-import sys
 import mysql.connector
-import numpy as np 
 import pandas as pd
 import logging
 

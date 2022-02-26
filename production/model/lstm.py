@@ -76,13 +76,21 @@ def keras_tuner(X_train, y_train):
 
 # LSTM prediction    
 def predict(stock_symbol, close):
+    
     try:
-        scaler, scaled_data = normalize(close)
-        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
-        model = keras_tuner(X_train, y_train)
-        model.save(f"saved_lstm/{stock_symbol}_lstm.h5")
-        scaled_predict = model.predict(X_train)
-        predict = scaler.inverse_transform(scaled_predict)
+        dpath = f"model/params/lstm/{symbol}.csv"
+        if path.isfile(dpath):
+            # LOAD MODEL
+            pass
+        else:
+            scaler, scaled_data = normalize(close)
+            X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
+            model = keras_tuner(X_train, y_train)
+            model.save(f"saved_lstm/{stock_symbol}_lstm.h5")
+            
+            # USE LOADED MODEL
+            scaled_predict = model.predict(X_train)
+            predict = scaler.inverse_transform(scaled_predict)
         return predict
     except Exception as e:
         logging.error("Exception occurred at load_df()", exc_info=True)

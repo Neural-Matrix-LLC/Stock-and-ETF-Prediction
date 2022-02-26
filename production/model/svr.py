@@ -8,7 +8,7 @@ import json
 def tune(symbol, X, y):
     logging.info(f'Tune SVR hyperparameters')
     try:
-        para_grid = {'kernel': ('linear', 'rbf','poly'), 'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
+        para_grid = {'kernel': ('linear', 'rbf', 'poly'), 'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
         svr = SVR()
         clf = RandomizedSearchCV(svr, para_grid, n_jobs=-1)
         clf.fit(X, y)
@@ -32,4 +32,3 @@ def predict(X_train, y_train, X_test, params):
         return prediction
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
-        

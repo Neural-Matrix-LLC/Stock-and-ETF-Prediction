@@ -13,7 +13,7 @@ def tune(symbol, X, y):
           'learning_rate': ['constant','adaptive'],
           'solver': ['adam']}
         mlp = MLPRegressor()
-        clf = GridSearchCV(mlp, para_grid, n_jobs=-1)
+        clf = GridSearchCV(mlp, param_grid, n_jobs=-1)
         clf.fit(X, y)
         top_params = clf.best_params
         logging.info(f'Best MLP parameters {top_params}')
