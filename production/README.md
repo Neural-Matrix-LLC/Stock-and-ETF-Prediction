@@ -21,6 +21,8 @@
 │   ├── lstm.py
 ├── output
 │   ├── {symbol_date}.csv
+├── logging
+│   ├── app.log
 ├── main.py
 ├── README.md
 ├── requirements.txt

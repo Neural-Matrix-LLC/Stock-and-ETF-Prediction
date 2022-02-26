@@ -75,7 +75,8 @@ def main():
                 realized_vol, X = processing.realized_vol(returns, rolling=5)
                 
                 # LSTM
-                lstm_predict = lstm.predict(symbol, close)
+                #lstm_predict = lstm.predict(symbol, close)
+                lstm_predict = None
 
                 output_dict = {
                     "Date": date.now(),

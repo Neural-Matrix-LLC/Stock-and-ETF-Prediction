@@ -76,7 +76,6 @@ def keras_tuner(X_train, y_train):
 
 # LSTM prediction    
 def predict(stock_symbol, close):
-    
     try:
         dpath = f"model/params/lstm/{symbol}.csv"
         if path.isfile(dpath):
