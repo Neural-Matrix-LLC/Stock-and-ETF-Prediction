@@ -1,3 +1,4 @@
+import re
 import numpy as np
 import pandas as pd
 import logging
@@ -11,6 +12,39 @@ host="143.244.188.157"
 port="3306"
 user="patrick-finProj"
 password="Pat#21$rick"
+
+def garch_predict(symbol, returns):
+    dpath = f"model/params/garch/{symbol}.csv"
+    if path.isfile(dpath):
+        params = load_csv(dpath)
+        garch_predict = garch.predict(returns, params)
+        return garch_predict
+    else:
+        params = garch.tune(symbol, returns)
+        garch_predict = garch.predict(returns, params)
+        return garch_predict
+
+def svr_predict(symbol, X, realized_vol):
+    dpath = f"model/params/svr/{symbol}.csv"
+    if path.isfile(dpath):
+        params = load_csv(dpath)
+        svr_predict = svr.predict(X, realized_vol, params)
+        return svr_predict
+    else:
+        params = svr.tune(X, realized_vol)
+        svr_predict = svr.predict(symbol, X, realized_vol, params)
+        return svr_predict
+
+def mlp_predict(symbol, X, realized_vol):
+    dpath = f"model/params/mlp/{symbol}.csv"
+    if path.isfile(dpath):
+        params = load_csv(dpath)
+        mlp_predict = mlp.predict(X, realized_vol, params)
+        return mlp_predict
+    else:
+        params = mlp.tune(X, realized_vol)
+        mlp_predict = mlp.predict(symbol, X, realized_vol, params)
+        return mlp_predict
 
 def main():
     logging.info(f'Start main.py')
@@ -28,33 +62,6 @@ def main():
                 close = df["Close"]
                 returns = processing.returns(close)
                 realized_vol, X = processing.realized_vol(returns, rolling=5)
-
-                # GARCH
-                dpath = f"model/params/garch/{symbol}.csv"
-                if path.isfile(dpath):
-                    params = load_csv(dpath)
-                    garch_predict = garch.predict(returns, params)
-                else:
-                    params = garch.tune(symbol, X, realized_vol)
-                    garch_predict = garch.predict(returns, params)
-
-                # SVR
-                dpath = f"model/params/svr/{symbol}.csv"
-                if path.isfile(dpath):
-                    params = load_csv(dpath)
-                    svr_predict = svr.predict(X, realized_vol, params)
-                else:
-                    params = svr.tune(X, realized_vol)
-                    svr_predict = svr.predict(symbol, X, realized_vol, params)
-                
-                # MLP
-                dpath = f"model/params/mlp/{symbol}.csv"
-                if path.isfile(dpath):
-                    params = load_csv(dpath)
-                    mlp_predict = mlp.predict(X, realized_vol, params)
-                else:
-                    params = mlp.tune(X, realized_vol)
-                    mlp_predict = mlp.predict(symbol, X, realized_vol, params)
                 
                 # LSTM
                 lstm_predict = lstm.predict(symbol, close)
@@ -63,9 +70,9 @@ def main():
                     "Date": date.now(),
                     "Symbol": symbol,
                     "Exchange": exchange,
-                    "garch": garch_predict,
-                    "svr": svr_predict,
-                    "mlp": mlp_predict,
+                    "garch": garch_predict(symbol, returns),
+                    "svr": svr_predict(symbol, X, realized_vol),
+                    "mlp": mlp_predict(symbol, X, realized_vol),
                     "LSTM": lstm_predict
                 }
                 output_df = pd.DataFrame(output_dict)
@@ -87,4 +94,3 @@ predict_mlp float
 DL_predict float 
 LSTM float
 """
-
