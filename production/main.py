@@ -108,6 +108,5 @@ Exchange varchar(45) PK
 predict_garch float 
 predict_svr float 
 predict_mlp float 
-DL_predict float 
-LSTM float
+predict_LSTM float
 """

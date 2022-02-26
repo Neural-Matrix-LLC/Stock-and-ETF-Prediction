@@ -15,7 +15,7 @@ def data(close, split=0.01):
         returns = 100 * close.pct_change().dropna()
         return returns
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
 
 def evaluate_model(residuals, st_residuals, lags=50):
     try:
@@ -96,7 +96,7 @@ def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list,
             elif results['LM_pvalue'][1] is False:
                 top_models.append(results)
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
     top_models.append(top_results)
     return top_models
 

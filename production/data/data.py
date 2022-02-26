@@ -9,7 +9,7 @@ def load_csv(dpath):
         df = pd.read_csv(dpath)
         return df
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
 
 def load_symbols():
     """
@@ -48,4 +48,4 @@ def load_df(stock_symbol, host, port, user, password):
             df.to_csv(dpath, index=False)
             return df
         except Exception as e:
-            logging.error("Exception occurred at load_df()", exc_info=True)
+            logging.error("Exception occurred", exc_info=True)
