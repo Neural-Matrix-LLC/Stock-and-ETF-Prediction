@@ -21,6 +21,7 @@ def realized_vol(returns, rolling_window):
         X = pd.concat([realized_vol, returns_svm], axis=1, ignore_index=True)
         X = X[4:].copy()
         X.reset_index(drop=True, inplace=True)
+        realized_vol.dropna(inplace=True)
         return X, realized_vol
     except Exception as e:
         logging.error("Exception occurred at load_df()", exc_info=True)
