@@ -14,7 +14,7 @@ scaler = MinMaxScaler(feature_range = (0,1))
 scaled_data = scaler.fit_transform(df["Close"].values.reshape(-1, 1))
 
 # Train-Test Split
-def create_dataset(dataset, time_step = 1):
+def create_dataset(dataset, time_step):
     x_data, y_data = [], []
     
     for i in range(len(dataset) - time_step - 1):

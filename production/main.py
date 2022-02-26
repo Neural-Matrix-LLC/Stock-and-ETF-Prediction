@@ -4,6 +4,7 @@ from os import path
 from datetime import date
 from data import data, processing
 from model import garch, svr, mlp, lstm
+from tensorflow import keras
 
 logging.basicConfig(filename='logging/app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
@@ -18,12 +19,10 @@ def garch_predict(symbol, returns):
         if path.isfile(dpath):
             logging.info(f'Load params from {dpath}')
             params = pd.read_json(dpath)
-            garch_predict = garch.predict(returns, params)
-            return garch_predict
         else:
             params = garch.tune(symbol, returns)
-            garch_predict = garch.predict(returns, params)
-            return garch_predict
+        garch_predict = garch.predict(returns, params)
+        return garch_predict
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
@@ -33,12 +32,10 @@ def svr_predict(symbol, X, realized_vol):
         if path.isfile(dpath):
             logging.info(f'Load params from {dpath}')
             params = pd.read_json(dpath)
-            svr_predict = svr.predict(X, realized_vol, params)
-            return svr_predict
         else:
             params = svr.tune(X, realized_vol)
-            svr_predict = svr.predict(symbol, X, realized_vol, params)
-            return svr_predict
+        svr_predict = svr.predict(symbol, X, realized_vol, params)
+        return svr_predict
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
@@ -48,14 +45,26 @@ def mlp_predict(symbol, X, realized_vol):
         if path.isfile(dpath):
             logging.info(f'Load params from {dpath}')
             params = pd.read_json(dpath)
-            mlp_predict = mlp.predict(X, realized_vol, params)
-            return mlp_predict
         else:
             params = mlp.tune(X, realized_vol)
-            mlp_predict = mlp.predict(symbol, X, realized_vol, params)
-            return mlp_predict
+        mlp_predict = mlp.predict(symbol, X, realized_vol, params)
+        return mlp_predict
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
+
+def lstm_predict(symbol, close):
+    try:
+        dpath = f"params/lstm/{symbol}.csv"
+        if path.isfile(dpath):
+            logging.info(f'Load LSTM model from {dpath}')
+            model = keras.models.load_model(dpath)
+        else:
+            model = lstm.tune(symbol, close)
+        lstm_predict = lstm.predict(close, model)
+        return lstm_predict
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)
+
 
 def main():
     logging.info(f'Start main.py')
@@ -81,7 +90,7 @@ def main():
                     "garch": garch_predict(symbol, returns),
                     "svr": svr_predict(symbol, X, realized_vol),
                     "mlp": mlp_predict(symbol, X, realized_vol),
-                    "LSTM": lstm_predict
+                    "LSTM": lstm_predict(symbol, close)
                 }
                 output_df = pd.DataFrame(output_dict)
                 output_df.to_csv(f'output/{symbol}_{date.now()}.csv')

@@ -1,5 +1,7 @@
-import numpy as np 
+import numpy as np
+from os import path
 import keras_tuner
+from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout,LSTM
@@ -13,7 +15,7 @@ def normalize(close):
         scaled_data = scaler.fit_transform(close.values.reshape(-1, 1))
         return scaler, scaled_data
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
         
 # test-train split
 def create_dataset(dataset, time_step):
@@ -24,7 +26,7 @@ def create_dataset(dataset, time_step):
             y_data.append(dataset[i + time_step, 0])
         return np.array(x_data), np.array(y_data)
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
 
 # Preparing train and test data
 def test_train_split(scaled_data, train_size=0.8, time_step=100):
@@ -38,7 +40,7 @@ def test_train_split(scaled_data, train_size=0.8, time_step=100):
         X_test = X_test.reshape(X_test.shape[0], X_test.shape[1] , 1)
         return X_train, y_train, X_test, y_test
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
 
 # Compile Model
 def build_model(hp):
@@ -55,7 +57,7 @@ def build_model(hp):
         model.compile(loss='mean_squared_error',optimizer='adam' )
         return model
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
 
 # Tune Model Parameters
 def keras_tuner(X_train, y_train):
@@ -65,31 +67,43 @@ def keras_tuner(X_train, y_train):
             objective='val_loss',
             max_trials= 5,
             executions_per_trial=3,
-            directory='lstm_tuner', project_name = f'{stock_symbol}')
+            directory='lstm_tuner', project_name = f'{symbol}')
         tuner.search(X_train, y_train,
                      epochs= 5,
                      validation_data=(X_test, ytest))
         model = tuner.get_best_models(num_models=1)[0]
         return model
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
+
+# LSTM Tune
+def tune(symbol, close):
+    try:
+        scaler, scaled_data = normalize(close)
+        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
+        model = keras_tuner(X_train, y_train)
+        model.save(f"params/lstm/{symbol}.h5")
+
+        return model
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)
 
 # LSTM prediction    
-def predict(stock_symbol, close):
+def predict(symbol, close):
     try:
-        dpath = f"model/params/lstm/{symbol}.csv"
+        dpath = f"params/lstm/{symbol}.csv"
         if path.isfile(dpath):
-            # LOAD MODEL
-            pass
+            logging.info(f'Load LSTM model from {dpath}')
+            model = keras.models.load_model(dpath)
         else:
             scaler, scaled_data = normalize(close)
             X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
             model = keras_tuner(X_train, y_train)
-            model.save(f"saved_lstm/{stock_symbol}_lstm.h5")
+            model.save(f"params/lstm/{symbol}.h5")
             
             # USE LOADED MODEL
             scaled_predict = model.predict(X_train)
             predict = scaler.inverse_transform(scaled_predict)
         return predict
     except Exception as e:
-        logging.error("Exception occurred at load_df()", exc_info=True)
+        logging.error("Exception occurred", exc_info=True)
