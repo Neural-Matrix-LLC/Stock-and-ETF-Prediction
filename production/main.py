@@ -29,49 +29,46 @@ def main():
                 returns = processing.returns(close)
                 realized_vol, X = processing.realized_vol(returns, rolling=5)
 
-                # GJR
-                dpath = f"model/params/garch/{stock_symbol}.csv"
+                # GARCH
+                dpath = f"model/params/garch/{symbol}.csv"
                 if path.isfile(dpath):
                     params = load_csv(dpath)
-                    svr_predict = garch.predict(returns, params)
+                    garch_predict = garch.predict(returns, params)
                 else:
-                    params = garch.tune(X, realized_vol)
-                    svr_predict = garch.predict(returns, params)
+                    params = garch.tune(symbol, X, realized_vol)
+                    garch_predict = garch.predict(returns, params)
 
                 # SVR
-                dpath = f"model/params/svr/{stock_symbol}.csv"
+                dpath = f"model/params/svr/{symbol}.csv"
                 if path.isfile(dpath):
                     params = load_csv(dpath)
                     svr_predict = svr.predict(X, realized_vol, params)
                 else:
                     params = svr.tune(X, realized_vol)
-                    svr_predict = svr.predict(X, realized_vol, params)
+                    svr_predict = svr.predict(symbol, X, realized_vol, params)
                 
                 # MLP
-                dpath = f"model/params/mlp/{stock_symbol}.csv"
+                dpath = f"model/params/mlp/{symbol}.csv"
                 if path.isfile(dpath):
                     params = load_csv(dpath)
-                    svr_predict = mlp.predict(X, realized_vol, params)
+                    mlp_predict = mlp.predict(X, realized_vol, params)
                 else:
                     params = mlp.tune(X, realized_vol)
-                    svr_predict = mlp.predict(X, realized_vol, params)
-                
-                DL_vol_predict = DL_vol.predict(symbol)
+                    mlp_predict = mlp.predict(symbol, X, realized_vol, params)
                 
                 # LSTM
                 lstm_predict = lstm.predict(symbol, close)
 
-                ouptput_dict = {
+                output_dict = {
                     "Date": date.now(),
                     "Symbol": symbol,
                     "Exchange": exchange,
                     "garch": garch_predict,
                     "svr": svr_predict,
-                    "NN_vol": NN_vol_predict,
-                    "DL_vol": DL_vol_predict,
+                    "mlp": mlp_predict,
                     "LSTM": lstm_predict
                 }
-                output_df = pd.DataFrame(dict)
+                output_df = pd.DataFrame(output_dict)
                 df.to_csv(f'output/{symbol}_{date.now()}.csv')
             except Exception as e:
                 logging.error("Exception occurred", exc_info=True)
@@ -86,7 +83,7 @@ Symbol varchar(45) PK
 Exchange varchar(45) PK 
 predict_garch float 
 predict_svr float 
-NN_predictions float 
+predict_mlp float 
 DL_predict float 
 LSTM float
 """

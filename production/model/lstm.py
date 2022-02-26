@@ -35,7 +35,7 @@ def test_train_split(scaled_data, train_size=0.8, time_step=100):
         test_size = len(scaled_data) - training_size
         train_data, test_data = scaled_data[0:training_size, :], scaled_data[training_size:len(scaled_data), :1]
         X_train, y_train = create_dataset(train_data, time_step)
-        X_test, ytest = create_dataset(test_data, time_step)
+        X_test, y_test = create_dataset(test_data, time_step)
         X_train = X_train.reshape(X_train.shape[0], X_train.shape[1] , 1)
         X_test = X_test.reshape(X_test.shape[0], X_test.shape[1] , 1)
         return X_train, y_train, X_test, y_test
@@ -60,7 +60,7 @@ def build_model(hp):
         logging.error("Exception occurred at load_df()", exc_info=True)
 
 # Tune Model Parameters
-def keras_tuner():
+def keras_tuner(X_train, y_train):
     try:
         tuner = keras_tuner.RandomSearch(
             build_model,
@@ -81,7 +81,7 @@ def predict(stock_symbol, close):
     try:
         scaler, scaled_data = normalize(close)
         X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
-        model = keras_tuner()
+        model = keras_tuner(X_train, y_train)
         model.save(f"saved_lstm/{stock_symbol}_lstm.h5")
         scaled_predict = model.predict(X_train)
         predict = scaler.inverse_transform(scaled_predict)
