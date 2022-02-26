@@ -1,11 +1,9 @@
 import numpy as np 
-import pandas as pd
 import keras_tuner
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout,LSTM
 from sklearn.preprocessing import MinMaxScaler
-from datetime import datetime
 import logging
 
 # normalize data

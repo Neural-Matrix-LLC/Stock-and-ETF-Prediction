@@ -1,4 +1,3 @@
-import re
 import numpy as np
 import pandas as pd
 import logging
@@ -76,7 +75,7 @@ def main():
                     "LSTM": lstm_predict
                 }
                 output_df = pd.DataFrame(output_dict)
-                df.to_csv(f'output/{symbol}_{date.now()}.csv')
+                output_df.to_csv(f'output/{symbol}_{date.now()}.csv')
             except Exception as e:
                 logging.error("Exception occurred", exc_info=True)
     except Exception as e:

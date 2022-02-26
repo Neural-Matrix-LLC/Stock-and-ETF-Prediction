@@ -28,7 +28,10 @@ def tune(symbol, X, y):
 
 # Predict with MLP using best parameters
 def predict(X_train, y_train, X_test, params):
-    clf = MLPRegressor(params)
-    clf.fit(X_train, y_train)
-    prediction = clf.predict(X_test)
-    return prediction
+    try:
+        clf = MLPRegressor(params)
+        clf.fit(X_train, y_train)
+        prediction = clf.predict(X_test)
+        return prediction
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)

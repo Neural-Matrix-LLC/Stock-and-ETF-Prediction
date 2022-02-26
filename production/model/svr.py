@@ -14,7 +14,7 @@ def tune(symbol, X, y):
         clf.fit(X, y)
         top_params = clf.best_params
         logging.info(f'Best SVR parameters {top_params}')
-        
+
         with open(f"params/svr/{symbol}", "w") as outfile:
             json.dump(top_params, outfile)
         logging.info(f'Export best SVR parameters to JSON')
@@ -25,7 +25,11 @@ def tune(symbol, X, y):
 
 # Predict with SVR using best parameters
 def predict(X_train, y_train, X_test, params):
-    clf = SVR(params)
-    clf.fit(X_train, y_train)
-    prediction = clf.predict(X_test)
-    return prediction
+    try:
+        clf = SVR(params)
+        clf.fit(X_train, y_train)
+        prediction = clf.predict(X_test)
+        return prediction
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)
+        
