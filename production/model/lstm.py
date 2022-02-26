@@ -1,7 +1,5 @@
 import numpy as np
-from os import path
 import keras_tuner
-from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout,LSTM
@@ -29,7 +27,7 @@ def create_dataset(dataset, time_step):
         logging.error("Exception occurred", exc_info=True)
 
 # Preparing train and test data
-def test_train_split(scaled_data, train_size=0.8, time_step=100):
+def test_train_split(scaled_data, train_size, time_step):
     try:
         training_size = int(len(scaled_data) * train_size)
         test_size = len(scaled_data) - training_size
@@ -83,27 +81,17 @@ def tune(symbol, close):
         X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
         model = keras_tuner(X_train, y_train)
         model.save(f"params/lstm/{symbol}.h5")
-
         return model
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
 # LSTM prediction    
-def predict(symbol, close):
+def predict(model, close):
     try:
-        dpath = f"params/lstm/{symbol}.csv"
-        if path.isfile(dpath):
-            logging.info(f'Load LSTM model from {dpath}')
-            model = keras.models.load_model(dpath)
-        else:
-            scaler, scaled_data = normalize(close)
-            X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
-            model = keras_tuner(X_train, y_train)
-            model.save(f"params/lstm/{symbol}.h5")
-            
-            # USE LOADED MODEL
-            scaled_predict = model.predict(X_train)
-            predict = scaler.inverse_transform(scaled_predict)
-        return predict
+        scaler, scaled_data = normalize(close)
+        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.9, time_step=100)
+        scaled_predict = model.predict(X_test)
+        predict = scaler.inverse_transform(scaled_predict)
+        return predict[-1]
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
