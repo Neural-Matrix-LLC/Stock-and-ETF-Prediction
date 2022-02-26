@@ -1,10 +1,15 @@
-import os
 from os import path
-import sys
 import mysql.connector
-import numpy as np 
 import pandas as pd
 import logging
+
+def load_csv(dpath):
+    try:
+        logging.info(f"Load data from {dpath}")
+        df = pd.read_csv(dpath)
+        return df
+    except Exception as e:
+        logging.error("Exception occurred at load_df()", exc_info=True)
 
 def load_symbols():
     """
@@ -12,8 +17,8 @@ def load_symbols():
     """
     try:
         logging.info(f'Fetch symbols.')
-        stock_list = pd.read_csv("../stocks_and_etfs/stock_list.csv")
-        etf_list = pd.read_csv("../stocks_and_etfs/etf_list.csv")
+        stock_list = pd.read_csv("stocks_and_etfs/stock_list.csv")
+        etf_list = pd.read_csv("stocks_and_etfs/etf_list.csv")
         symbol_list = stock_list.append(etf_list).rename({"0": "Symbol"}, axis=1).reset_index(drop=True)
         return symbol_list
     except Exception as e:
@@ -23,13 +28,9 @@ def load_df(stock_symbol, host, port, user, password):
     """
     Return dataframe from histdailyprice3
     """
-    dpath="../histdailyprice3/{}.csv".format(stock_symbol)
+    dpath = f"histdailyprice3/{stock_symbol}.csv"
     if path.isfile(dpath):
-        try:
-            logging.info("Load data from {}".format(dpath))
-            df = pd.read_csv(dpath)
-        except Exception as e:
-            logging.error("Exception occurred at load_df()", exc_info=True)
+        load_csv(dpath)
     else:
         logging.info(f'Load data from MySQL.')
         try: 

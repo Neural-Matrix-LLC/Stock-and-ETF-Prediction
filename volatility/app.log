@@ -1,18 +1,3 @@
-06-Feb-22 11:56:24 - This is a warning message
-06-Feb-22 11:56:24 - This is an error message
-06-Feb-22 11:56:24 - This is a critical message
-06-Feb-22 11:56:52 - This is a warning message
-06-Feb-22 11:56:52 - This is an error message
-06-Feb-22 11:56:52 - This is a critical message
-06-Feb-22 11:57:04 - This is a warning message
-06-Feb-22 11:57:04 - This is an error message
-06-Feb-22 11:57:04 - This is a critical message
-06-Feb-22 11:58:48 - This is a warning message
-06-Feb-22 11:58:48 - This is an error message
-06-Feb-22 11:58:48 - This is a critical message
-06-Feb-22 11:59:01 - This is a warning message
-06-Feb-22 11:59:01 - This is an error message
-06-Feb-22 11:59:01 - This is a critical message
-06-Feb-22 11:59:55 - This is a warning message
-06-Feb-22 11:59:55 - This is an error message
-06-Feb-22 11:59:55 - This is a critical message
+26-Feb-22 13:02:45 — root — WARNING — <module>:6 — This is a warning message
+26-Feb-22 13:02:45 — root — ERROR — <module>:7 — This is an error message
+26-Feb-22 13:02:45 — root — CRITICAL — <module>:8 — This is a critical message
