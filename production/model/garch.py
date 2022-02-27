@@ -100,7 +100,7 @@ def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list,
     top_models.append(top_results)
     return top_models
 
-def tune(data):
+def tune(symbol, data):
     # Parameters
     num_p = 10
     mean_list = ['Constant', 'Zero', 'LS', 'AR', 'ARX', 'HARX']
