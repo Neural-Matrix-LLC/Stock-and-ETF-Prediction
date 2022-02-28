@@ -105,9 +105,9 @@ def tune(symbol, data):
     num_p = 10
     mean_list = ['Constant', 'Zero', 'LS', 'AR', 'ARX', 'HARX']
     vol_list = ['GARCH', 'ARCH', 'EGARCH','FIARCH', 'HARCH'] 
-    p_rng = range(0,20)
+    p_rng = range(1,20)
     o_rng = range(0,20)
-    q_rng = range(0,20)
+    q_rng = range(1,20)
     dist_list = ['normal', 't', 'skewt', 'ged']
     try:
         logging.info("Start GARCH Process")
