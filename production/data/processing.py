@@ -19,7 +19,7 @@ def realized_vol(returns, rolling_window):
         realized_vol = returns.rolling(rolling_window).std()
         returns_svm = returns ** 2
         X = pd.concat([realized_vol, returns_svm], axis=1, ignore_index=True)
-        X = X[4:].copy()
+        X = X[rolling_window-1:].copy()
         X.reset_index(drop=True, inplace=True)
         realized_vol.dropna(inplace=True)
         return X, realized_vol

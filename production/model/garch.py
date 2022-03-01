@@ -3,27 +3,12 @@ import pandas as pd
 from arch import arch_model
 import logging
 from multiprocessing import Pool
-from scipy.stats import shapiro
 from statsmodels.stats.diagnostic import het_arch
-from sklearn.metrics import precision_score, f1_score
 
-
-# Generate returns for Volatiltiy models
-def data(close, split=0.01):
-    try:
-        logging.info(f'Generate returns')
-        returns = 100 * close.pct_change().dropna()
-        return returns
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-
-def evaluate_model(residuals, st_residuals, lags=50):
+def evaluate_model(residuals, lags=50):
     try:
         results = {
             'LM_pvalue': None,
-            'F_pvalue': None,
-            'SW_pvalue': None,
-            'AIC': None,
             'BIC': None,
             'params': {
                 'mean': None,
@@ -35,11 +20,8 @@ def evaluate_model(residuals, st_residuals, lags=50):
                 }
         }
         arch_test = het_arch(residuals, nlags=lags)
-        shap_test = shapiro(st_residuals)
         # We want falsey values for each of these hypothesis tests
         results['LM_pvalue'] = [arch_test[1], arch_test[1] < .05]
-        results['F_pvalue'] = [arch_test[3], arch_test[3] < .05]
-        results['SW_pvalue'] = [shap_test[1], shap_test[1] < .05]
         return results
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
@@ -53,9 +35,7 @@ def p_calc_model(data, mean, vol, p, q, o, dist):
         model_fit = model.fit(disp='off')
         resid = model_fit.resid
         logging.info("calc_model.divide")
-        st_resid = np.divide(resid, model_fit.conditional_volatility)
-        res = evaluate_model(resid, st_resid)
-        res['AIC'] = model_fit.aic
+        res = evaluate_model(resid)
         res['BIC'] = model_fit.bic
         res['params']['mean'] = mean
         res['params']['vol'] = vol
@@ -72,7 +52,6 @@ def multip_gridsearch(data, mean_list, vol_list, p_rng, q_rng, o_rng, dist_list,
     logging.info(f"multi_gridsearch: {n_sym} trials.")
     top_score, top_results = float('inf'), None
     top_models = []
-    
     try:
         ll = []
         for mean in mean_list:
