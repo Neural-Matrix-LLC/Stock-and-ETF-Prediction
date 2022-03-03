@@ -79,7 +79,7 @@ def tune(symbol, close):
     try:
         scaler, scaled_data = normalize(close)
         X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
-        model = k_unter(X_train, y_train)
+        model = k_tuner(X_train, y_train)
         model.save(f"params/lstm/{symbol}.h5")
         return model
     except Exception as e:
