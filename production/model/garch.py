@@ -30,7 +30,7 @@ def p_calc_model(data, mean, vol, p, q, o, dist):
     res = {}
     try:
         logging.info(f"calc_model({mean},{vol}, {p}, {o}, {q}, {dist})")
-        model = arch_model(data, mean='zero', mean=mean, vol=vol, p=p, o=o, q=q, dist=dist)
+        model = arch_model(data, mean=mean, vol=vol, p=p, o=o, q=q, dist=dist)
         logging.info("calc_model.model_fit")
         model_fit = model.fit(disp='off')
         resid = model_fit.resid

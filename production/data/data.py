@@ -24,10 +24,15 @@ def load_symbols():
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
-def load_df(stock_symbol, host, port, user, password):
+def load_df(stock_symbol):
     """
     Return dataframe from histdailyprice3
     """
+    HOST="143.244.188.157"
+    PORT="3306"
+    USER="patrick-finProj"
+    PASSWORD="Pat#21$rick"
+
     dpath = f"histdailyprice3/{stock_symbol}.csv"
     if path.isfile(dpath):
         load_csv(dpath)
@@ -35,10 +40,10 @@ def load_df(stock_symbol, host, port, user, password):
         logging.info(f'Load data from MySQL.')
         try: 
             conn = mysql.connector.connect(
-                host,
-                port,
-                user,
-                password,
+                host=HOST,
+                port=PORT,
+                user=USER,
+                password=PASSWORD,
                 database="GlobalMarketData"
             )
             query = f"SELECT Date, Exchange, Close, Open, High, Low, Volume from histdailyprice3 WHERE Symbol='{stock_symbol}';"

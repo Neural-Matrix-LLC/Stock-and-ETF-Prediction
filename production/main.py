@@ -8,11 +8,6 @@ from tensorflow import keras
 
 logging.basicConfig(filename='logging/app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
-host="143.244.188.157"
-port="3306"
-user="patrick-finProj"
-password="Pat#21$rick"
-
 def garch_predict(symbol, returns):
     try:
         dpath = f"model/params/garch/{symbol}.csv"
@@ -46,7 +41,7 @@ def mlp_predict(symbol, X, realized_vol):
             logging.info(f'Load params from {dpath}')
             params = pd.read_json(dpath)
         else:
-            params = mlp.tune(X, realized_vol)
+            params = mlp.tune(symbol, X, realized_vol)
         mlp_predict = mlp.predict(symbol, X, realized_vol, params)
         return mlp_predict
     except Exception as e:
@@ -73,7 +68,7 @@ def main():
         for symbol in symbol_list.Symbol:
             logging.info(f'Generate predictions for {symbol}')
             try:
-                df = data.load_df(symbol, host, port, user, password)
+                df = data.load_df(symbol)
                 exchange = df.Exchange.iloc[0]
 
                 # Data Processing

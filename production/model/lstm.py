@@ -58,7 +58,7 @@ def build_model(hp):
         logging.error("Exception occurred", exc_info=True)
 
 # Tune Model Parameters
-def keras_tuner(X_train, y_train):
+def k_tuner(X_train, y_train):
     try:
         tuner = keras_tuner.RandomSearch(
             build_model,
@@ -79,7 +79,7 @@ def tune(symbol, close):
     try:
         scaler, scaled_data = normalize(close)
         X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
-        model = keras_tuner(X_train, y_train)
+        model = k_unter(X_train, y_train)
         model.save(f"params/lstm/{symbol}.h5")
         return model
     except Exception as e:
