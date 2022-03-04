@@ -60,3 +60,12 @@ Traceback (most recent call last):
   File "/tmp/ipykernel_19232/2755832134.py", line 17, in tune
     top_params = clf.best_params
 AttributeError: 'GridSearchCV' object has no attribute 'best_params'
+04-Mar-22 15:47:58 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/2755832134.py", line 28, in predict
+    clf.fit(X.iloc[:-1].values, y[1:].values.reshape(-1,))
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py", line 752, in fit
+    return self._fit(X, y, incremental=False)
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py", line 385, in _fit
+    if np.any(np.array(hidden_layer_sizes) <= 0):
+TypeError: '<=' not supported between instances of 'numpy.ndarray' and 'int'

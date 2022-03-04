@@ -24,8 +24,12 @@ def tune(X, y):
 # Predict with MLP using best parameters
 def predict(X, y, params):
     try:
-        clf = MLPRegressor(params)
-        clf.fit(X.iloc[:-1].values, y[1:].values.reshape(-1,))
+        clf = MLPRegressor(activation=params["activation"], 
+                            alpha=params["alpha"], 
+                            hidden_layer_sizes=params["hidden_layer_sizes"],
+                            learning_rate=params["learning_rate"],
+                            solver=params["solver"])
+        clf.fit(X, y)
         prediction = clf.predict(X.iloc[-1:])
         return prediction
     except Exception as e:
