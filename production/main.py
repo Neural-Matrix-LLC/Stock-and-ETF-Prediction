@@ -14,9 +14,13 @@ def garch_predict(symbol, returns):
         dpath = f"model/params/garch/{symbol}.csv"
         if path.isfile(dpath):
             logging.info(f'Load params from {dpath}')
-            params = pd.read_json(dpath)
+            with open(dpath, "r") as ifile:
+                params = json.load(ifile)
         else:
             params = garch.tune(symbol, returns)
+            with open(dpath, "w") as outfile:
+                json.dump(params, outfile)
+            logging.info(f'Export best garch parameters to {dpath}')
         garch_predict = garch.predict(returns, params)
         return garch_predict
     except Exception as e:
@@ -27,10 +31,14 @@ def svr_predict(symbol, X, realized_vol):
         dpath = f"model/params/svr/{symbol}.csv"
         if path.isfile(dpath):
             logging.info(f'Load params from {dpath}')
-            params = pd.read_json(dpath)
+            with open(dpath, "r") as ifile:
+                params = json.load(ifile)
         else:
             params = svr.tune(X, realized_vol)
-        svr_predict = svr.predict(symbol, X, realized_vol, params)
+            with open(dpath, "w") as outfile:
+                json.dump(params, outfile)
+            logging.info(f'Export best SVR parameters to {dpath}')
+        svr_predict = svr.predict(X, realized_vol, params)
         return svr_predict
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
