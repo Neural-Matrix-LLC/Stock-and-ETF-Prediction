@@ -55,3 +55,8 @@ Traceback (most recent call last):
   File "/tmp/ipykernel_19232/1950450755.py", line 17, in get_realized_vol
     realized_vol = returns.rolling(rolling_window).std()
 AttributeError: 'tuple' object has no attribute 'rolling'
+04-Mar-22 15:16:32 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/2755832134.py", line 17, in tune
+    top_params = clf.best_params
+AttributeError: 'GridSearchCV' object has no attribute 'best_params'
