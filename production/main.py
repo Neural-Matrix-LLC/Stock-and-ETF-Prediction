@@ -49,16 +49,18 @@ def mlp_predict(symbol, X, realized_vol):
 
 def lstm_predict(symbol, close):
     try:
-        dpath = f"params/lstm/{symbol}.csv"
+        dpath = f"params/lstm/{symbol}.h5"
         if path.isfile(dpath):
             logging.info(f'Load LSTM model from {dpath}')
             model = keras.models.load_model(dpath)
         else:
             model = lstm.tune(symbol, close)
+            model.save(dpath)
+            logging.info(f'Export best LSTM model to {dpath}')
         lstm_predict = lstm.predict(model, close)
         return lstm_predict
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("Exception occurred", exc_info=True) 
 
 def main():
     logging.info(f'Start main.py')
