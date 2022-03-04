@@ -50,3 +50,8 @@ Traceback (most recent call last):
   File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/pandas/io/common.py", line 399, in _get_handle
     f = open(path_or_buf, mode, encoding=encoding, newline="")
 FileNotFoundError: [Errno 2] No such file or directory: 'histdailyprice3/SPY.csv'
+04-Mar-22 14:19:42 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/1950450755.py", line 17, in get_realized_vol
+    realized_vol = returns.rolling(rolling_window).std()
+AttributeError: 'tuple' object has no attribute 'rolling'

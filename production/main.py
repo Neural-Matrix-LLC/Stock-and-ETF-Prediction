@@ -89,7 +89,7 @@ def main():
                 # Data Processing
                 logging.info(f'Data processing for {symbol}')
                 close = df["Close"]
-                returns = processing.get_returns(close)
+                returns, n, split_date = processing.get_returns(close)
                 X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
 
                 output_dict = {
