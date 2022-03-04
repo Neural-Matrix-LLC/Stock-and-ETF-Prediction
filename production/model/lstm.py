@@ -75,12 +75,11 @@ def k_tuner(X_train, y_train):
         logging.error("Exception occurred", exc_info=True)
 
 # LSTM Tune
-def tune(symbol, close):
+def tune(close):
     try:
         scaler, scaled_data = normalize(close)
         X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.8, time_step=100)
         model = k_tuner(X_train, y_train)
-        model.save(f"params/lstm/{symbol}.h5")
         return model
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
