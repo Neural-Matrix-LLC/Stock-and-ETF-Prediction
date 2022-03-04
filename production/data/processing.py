@@ -2,7 +2,7 @@ import pandas as pd
 import logging
 
 # Generate returns for Volatiltiy models
-def returns(close, split=0.01):
+def get_returns(close, split=0.01):
     try:
         logging.info(f'Generate returns')
         returns = 100 * close.pct_change().dropna()
@@ -13,7 +13,7 @@ def returns(close, split=0.01):
         logging.error("Exception occurred", exc_info=True)
 
 # Compute realized volatility
-def realized_vol(returns, rolling_window):
+def get_realized_vol(returns, rolling_window):
     try:
         logging.info(f'Generate X and realized_vol with rolling window {rolling_window}')
         realized_vol = returns.rolling(rolling_window).std()

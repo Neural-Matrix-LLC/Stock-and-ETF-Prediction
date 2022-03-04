@@ -1,0 +1,52 @@
+04-Mar-22 13:27:45 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/1048366181.py", line 6, in main
+    for symbol in symbol_list.Symbol:
+AttributeError: 'list' object has no attribute 'Symbol'
+04-Mar-22 13:28:16 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/76185192.py", line 6, in main
+    for symbol in symbol_list.Symbol:
+AttributeError: 'list' object has no attribute 'Symbol'
+04-Mar-22 13:28:28 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/3213335048.py", line 6, in run_main
+    for symbol in symbol_list.Symbol:
+AttributeError: 'list' object has no attribute 'Symbol'
+04-Mar-22 13:28:45 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/1880866581.py", line 17, in load_df
+    conn = mysql.connector.connect(
+NameError: name 'mysql' is not defined
+04-Mar-22 13:28:45 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/2908689185.py", line 10, in run_main
+    exchange = df.Exchange.iloc[0]
+AttributeError: 'NoneType' object has no attribute 'Exchange'
+04-Mar-22 13:29:08 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/1880866581.py", line 17, in load_df
+    conn = mysql.connector.connect(
+NameError: name 'mysql' is not defined
+04-Mar-22 13:30:08 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/1880866581.py", line 28, in load_df
+    df.to_csv(dpath, index=False)
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/pandas/core/generic.py", line 3228, in to_csv
+    formatter.save()
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/pandas/io/formats/csvs.py", line 179, in save
+    f, handles = _get_handle(
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/pandas/io/common.py", line 399, in _get_handle
+    f = open(path_or_buf, mode, encoding=encoding, newline="")
+FileNotFoundError: [Errno 2] No such file or directory: 'histdailyprice3/SPY.csv'
+04-Mar-22 14:14:51 - Exception occurred
+Traceback (most recent call last):
+  File "/tmp/ipykernel_19232/1880866581.py", line 28, in load_df
+    df.to_csv(dpath, index=False)
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/pandas/core/generic.py", line 3228, in to_csv
+    formatter.save()
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/pandas/io/formats/csvs.py", line 179, in save
+    f, handles = _get_handle(
+  File "/Users/simplypatrickg/.local/lib/python3.8/site-packages/pandas/io/common.py", line 399, in _get_handle
+    f = open(path_or_buf, mode, encoding=encoding, newline="")
+FileNotFoundError: [Errno 2] No such file or directory: 'histdailyprice3/SPY.csv'

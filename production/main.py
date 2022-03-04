@@ -89,8 +89,8 @@ def main():
                 # Data Processing
                 logging.info(f'Data processing for {symbol}')
                 close = df["Close"]
-                returns = processing.returns(close)
-                X, realized_vol = processing.realized_vol(returns, rolling_window=5)
+                returns = processing.get_returns(close)
+                X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
 
                 output_dict = {
                     "Date": date.now(),
