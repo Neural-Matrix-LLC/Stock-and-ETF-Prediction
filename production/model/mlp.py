@@ -14,7 +14,7 @@ def tune(X, y):
         mlp = MLPRegressor()
         clf = GridSearchCV(mlp, param_grid, n_jobs=-1)
         clf.fit(X, y)
-        top_params = clf.best_params
+        top_params = clf.best_params_
         logging.info(f'Best MLP parameters {top_params}')
 
         return top_params
