@@ -93,6 +93,11 @@ def main():
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
+if __name__ == '__main__':
+    import logging
+    logging.getLogger().setLevel(logging.DEBUG)
+    main()
+
 """
 Table: DailyOutputs
 Columns:
