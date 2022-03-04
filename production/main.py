@@ -5,6 +5,7 @@ from datetime import date
 from data import data, processing
 from model import garch, svr, mlp, lstm
 from tensorflow import keras
+import json
 
 logging.basicConfig(filename='logging/app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
@@ -39,10 +40,14 @@ def mlp_predict(symbol, X, realized_vol):
         dpath = f"model/params/mlp/{symbol}.csv"
         if path.isfile(dpath):
             logging.info(f'Load params from {dpath}')
-            params = pd.read_json(dpath)
+            with open(dpath, "r") as ifile:
+                params = json.load(ifile)
         else:
-            params = mlp.tune(symbol, X, realized_vol)
-        mlp_predict = mlp.predict(symbol, X, realized_vol, params)
+            params = mlp.tune(X, realized_vol)
+            with open(dpath, "w") as outfile:
+                json.dump(params, outfile)
+            logging.info(f'Export best MLP parameters to {dpath}')           
+        mlp_predict = mlp.predict(X, realized_vol, params)
         return mlp_predict
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
