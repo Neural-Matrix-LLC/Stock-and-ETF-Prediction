@@ -1,10 +1,9 @@
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 import logging
-import json
 
 # Tune MLP
-def tune(symbol, X, y):
+def tune(X, y):
     logging.info(f'Tune MLP hyperparameters')
     try:
         param_grid = {'hidden_layer_sizes': [(100, 50), (50, 50), (10, 100)],
@@ -17,10 +16,6 @@ def tune(symbol, X, y):
         clf.fit(X, y)
         top_params = clf.best_params
         logging.info(f'Best MLP parameters {top_params}')
-
-        with open(f"params/mlp/{symbol}", "w") as outfile:
-            json.dump(top_params, outfile)
-        logging.info(f'Export best MLP parameters to JSON')
 
         return top_params
     except Exception as e:
