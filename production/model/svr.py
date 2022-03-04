@@ -13,7 +13,6 @@ def tune(X, y):
         clf.fit(X, y)
         top_params = clf.best_params_
         logging.info(f'Best SVR parameters {top_params}')
-       
         return top_params
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
