@@ -2,23 +2,18 @@ from sklearn.svm import SVR
 from scipy.stats import uniform as sp_rand
 from sklearn.model_selection import RandomizedSearchCV
 import logging
-import json
 
 # Tune SVR
-def tune(symbol, X, y):
+def tune(X, y):
     logging.info(f'Tune SVR hyperparameters')
     try:
         para_grid = {'kernel': ('linear', 'rbf', 'poly'), 'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
         svr = SVR()
         clf = RandomizedSearchCV(svr, para_grid, n_jobs=-1)
         clf.fit(X, y)
-        top_params = clf.best_params
+        top_params = clf.best_params_
         logging.info(f'Best SVR parameters {top_params}')
-
-        with open(f"params/svr/{symbol}", "w") as outfile:
-            json.dump(top_params, outfile)
-        logging.info(f'Export best SVR parameters to JSON')
-        
+       
         return top_params
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
