@@ -20,8 +20,8 @@ def tune(X, y):
 # Predict with SVR using best parameters
 def predict(X, y, params):
     try:
-        clf = SVR(params)
-        clf.fit(X.iloc[:-1].values, y[1:].values.reshape(-1,))
+        clf = SVR(kernel=params["kernel"], gamma=params["gamma"], C=params["C"], epsilon=params["epsilon"])
+        clf.fit(X, y)
         prediction = clf.predict(X.iloc[-1:])
         return prediction
     except Exception as e:
