@@ -7,7 +7,7 @@ import logging
 def tune(X, y):
     logging.info(f'Tune SVR hyperparameters')
     try:
-        para_grid = {'kernel': ('linear', 'rbf', 'poly'), 'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
+        para_grid = {'kernel': ('linear', 'rbf'), 'gamma': sp_rand(), 'C': sp_rand(), 'epsilon': sp_rand()}
         svr = SVR()
         clf = RandomizedSearchCV(svr, para_grid, n_jobs=-1)
         clf.fit(X, y)
