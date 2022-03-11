@@ -1,7 +1,7 @@
 import pandas as pd
 import logging
 from os import path
-from datetime import date
+import datetime
 from data import data, processing
 from model import garch, svr, mlp, lstm
 from tensorflow import keras
@@ -78,8 +78,11 @@ def lstm_predict(symbol, close):
 def main():
     logging.info(f'Start main.py')
     try:
+        run_time = datetime.datetime.now()
         symbol_list = data.load_symbols()
         logging.info(f'Loop through symbols')
+
+        rowlist = []
         for symbol in symbol_list.Symbol:
             logging.info(f'Generate predictions for {symbol}')
             try:
@@ -93,7 +96,7 @@ def main():
                 X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
 
                 output_dict = {
-                    "Date": date.now(),
+                    "Date": runtime,
                     "Symbol": symbol,
                     "Exchange": exchange,
                     "garch": garch_predict(symbol, returns),
