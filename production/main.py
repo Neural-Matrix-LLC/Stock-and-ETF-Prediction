@@ -96,7 +96,7 @@ def main():
                 X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
 
                 output_dict = {
-                    "Date": runtime,
+                    "Date": run_time,
                     "Symbol": symbol,
                     "Exchange": exchange,
                     "garch": garch_predict(symbol, returns),
@@ -104,10 +104,11 @@ def main():
                     "mlp": mlp_predict(symbol, X, realized_vol),
                     "LSTM": lstm_predict(symbol, close)
                 }
-                output_df = pd.DataFrame(output_dict)
-                output_df.to_csv(f'output/{symbol}_{date.now()}.csv')
+                rowlist.append(output_dict)
             except Exception as e:
                 logging.error("Exception occurred", exc_info=True)
+        output_df = pd.DataFrame(rowlist)
+        output_df.to_csv(f'output/predict_{run_time}.csv')
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
