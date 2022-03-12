@@ -1,7 +1,7 @@
 import pandas as pd
 import logging
 
-# Generate returns for Volatiltiy models
+# Generate returns for Volatility models
 def get_returns(close, split=0.01):
     try:
         logging.info(f'Generate returns')
