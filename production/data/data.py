@@ -54,24 +54,3 @@ def load_df(stock_symbol):
             return df
         except Exception as e:
             logging.error("Exception occurred", exc_info=True)
-
-def load_daily_outputs():
-    HOST="143.244.188.157"
-    PORT="3306"
-    USER="patrick-finProj"
-    PASSWORD="Pat#21$rick"
-    try: 
-        conn = mysql.connector.connect(
-            host=HOST,
-            port=PORT,
-            user=USER,
-            password=PASSWORD,
-            database="MarketPredict"
-        )
-        query = f"SELECT * FROM DailyOutputs;"
-        marketpredict = pd.read_sql(query, conn)
-        conn.close()
-        df = marketpredict.copy()
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-        
