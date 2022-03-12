@@ -99,7 +99,7 @@ def predict(model, close):
     logging.info(f'LSTM Predict')
     try:
         scaler, scaled_data = normalize(close)
-        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.9, time_step=100)
+        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0, time_step=100)
         scaled_predict = model.predict(X_test)
         predict = scaler.inverse_transform(scaled_predict)
         return predict[-1]
