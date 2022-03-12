@@ -108,7 +108,7 @@ def main():
             except Exception as e:
                 logging.error("Exception occurred", exc_info=True)
         output_df = pd.DataFrame(rowlist)
-        output_df.to_csv(f'output/predict_{run_time}.csv')
+        output_df.to_csv(f'daily_output/predict_{run_time}.csv')
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 

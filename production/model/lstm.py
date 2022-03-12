@@ -105,3 +105,12 @@ def predict(model, close):
         return predict[-1]
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
+
+"""
+100 * X cells = total_days
+
+(X_train.shape[0], X_train.shape[1] , 1)
+X = (100, 1, 1)
+Y = (1, 1)
+
+"""
