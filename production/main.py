@@ -1,7 +1,7 @@
 import pandas as pd
 import logging
 from os import path
-import datetime
+from datetime import date
 from data import data, processing
 from model import garch, svr, mlp, lstm
 from tensorflow import keras
@@ -78,7 +78,8 @@ def lstm_predict(symbol, close):
 def main():
     logging.info(f'Start main.py')
     try:
-        run_time = datetime.datetime.now()
+        today = date.today()
+        today = today.strftime("%Y-%m-%d")
         symbol_list = data.load_symbols()
         logging.info(f'Loop through symbols')
 
@@ -96,7 +97,7 @@ def main():
                 X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
 
                 output_dict = {
-                    "Date": run_time,
+                    "Date": today,
                     "Symbol": symbol,
                     "Exchange": exchange,
                     "garch": garch_predict(symbol, returns),
