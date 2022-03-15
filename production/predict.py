@@ -16,32 +16,6 @@ predict_mlp float
 predict_LSTM float
 """
 
-"""
-Do not need to do parameter tuning every day.
-
-Experiment: Run on Friday
-
-DailyOutputs (Predicting for Monday)
-predict_GARCH, preidct_SVR, predict_MLP - Volatility ()
-predict_LSTM - Up and Down (no. 100 timesteps)
-
-Friday 20 Predict 21.23 21.46
-
-predict_GARCH, preidct_SVR, predict_MLP > threshold (0.02)
-predict_LSTM > previous day close 
-
-histdailyprice3(FRIDAY) 
-
-PredictPrecent:
-+ve:    Price going up over threshold
--ve:    Price going down over threshold
-0:      Neither
-
-
-PredictPercent: Monday predicted close vs Friday actual close
-ActualPercent: Monday actual close vs Friday actual close
-"""
-
 HOST="143.244.188.157"
 PORT="3306"
 USER="patrick-finProj"
@@ -64,15 +38,8 @@ def load_daily_outputs():
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
-dailyoutput = load_daily_outputs()
-predictDate = datetime.strptime(dailyoutput.loc[0, 'Date'], "%Y-%m-%d")
-_offsets = (3, 1, 1, 1, 1, 1, 2)
-def prev_weekday(adate):
-    return adate - timedelta(days=_offsets[adate.weekday()])
-prev_date = prev_weekday(predictDate).strftime("%Y-%m-%d")
-
-def load_prev_date():
-    logging.info(f'Load data from histdailyprice3 table in MySQL.')
+def load_prev_date(prev_date):
+    logging.info(f'Load data on {prev_date} from histdailyprice3 table in MySQL.')
     try: 
         conn = mysql.connector.connect(
             host=HOST,
@@ -88,13 +55,23 @@ def load_prev_date():
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
+def get_price_movement(change):
+    if change > 0:
+        return 1
+    elif change < 0:
+        return -1
+    else:
+        return 0
 
-"""
-March 11 2022
-100 days before =~ December 10 2022 for X_test
-Model is complete.
-
-(100, 1)
-Feed in and get one output. Monday March 14 2022.
-
-"""
+def main():
+    dailyoutput_df = load_daily_outputs()
+    predictDate = datetime.strptime(dailyoutput_df.loc[0, 'Date'], "%Y-%m-%d")
+    _offsets = (3, 1, 1, 1, 1, 1, 2)
+    def prev_weekday(adate):
+        return adate - timedelta(days=_offsets[adate.weekday()])
+    prev_date = prev_weekday(predictDate).strftime("%Y-%m-%d")
+    prev_date_df = load_prev_date(prev_date)
+    predict_df = dailyoutput_df.merge(prev_date_df, on='Symbol')
+    predict_df["close_change"] = predict_df.loc[:, 'LSTM'] - predict_df.loc[:, 'Close']
+    predict_df["price_movement"] = predict_df["close_change"].apply(get_price_movement)
+    pass
