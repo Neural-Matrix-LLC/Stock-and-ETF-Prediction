@@ -102,6 +102,6 @@ def predict(model, close):
         X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0, time_step=100)
         scaled_predict = model.predict(X_test)
         predict = scaler.inverse_transform(scaled_predict)
-        return predict[-1]
+        return predict[-1][0]
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)

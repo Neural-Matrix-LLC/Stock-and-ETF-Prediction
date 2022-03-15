@@ -109,6 +109,6 @@ def predict(data, params):
         model = arch_model(data, params)
         model_fit = model.fit(disp='off')
         pred = model_fit.forecast(horizon=1)
-        return pred.variance.values[-1,:][0] / 100  # Return the variance
+        return pred.variance.values[-1,:][0]  # Return the variance
     except Exception as e:
         logging.error("predict: Exception occurred")

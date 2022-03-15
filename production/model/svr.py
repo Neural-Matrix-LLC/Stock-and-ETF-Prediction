@@ -23,6 +23,6 @@ def predict(X, y, params):
         clf = SVR(kernel=params["kernel"], gamma=params["gamma"], C=params["C"], epsilon=params["epsilon"])
         clf.fit(X, y)
         prediction = clf.predict(X.iloc[-1:])
-        return prediction
+        return prediction[0]
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)

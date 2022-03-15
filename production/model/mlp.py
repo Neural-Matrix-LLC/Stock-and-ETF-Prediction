@@ -31,6 +31,6 @@ def predict(X, y, params):
                             solver=params["solver"])
         clf.fit(X, y)
         prediction = clf.predict(X.iloc[-1:])
-        return prediction
+        return prediction[0]
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
