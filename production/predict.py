@@ -2,6 +2,7 @@ from os import path
 import mysql.connector
 import pandas as pd
 import logging
+from datetime import date, timedelta, datetime
 
 """
 Table: DailyOutputs
@@ -41,11 +42,13 @@ PredictPercent: Monday predicted close vs Friday actual close
 ActualPercent: Monday actual close vs Friday actual close
 """
 
+HOST="143.244.188.157"
+PORT="3306"
+USER="patrick-finProj"
+PASSWORD="Pat#21$rick"
+
 def load_daily_outputs():
-    HOST="143.244.188.157"
-    PORT="3306"
-    USER="patrick-finProj"
-    PASSWORD="Pat#21$rick"
+    logging.info(f'Load data from DailyOutputs table in MySQL.')
     try: 
         conn = mysql.connector.connect(
             host=HOST,
@@ -55,11 +58,36 @@ def load_daily_outputs():
             database="MarketPredict"
         )
         query = f"SELECT * FROM DailyOutputs;"
-        marketpredict = pd.read_sql(query, conn)
+        dailyoutput = pd.read_sql(query, conn)
         conn.close()
-        df = marketpredict.copy()
+        return dailyoutput
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
+
+dailyoutput = load_daily_outputs()
+predictDate = datetime.strptime(dailyoutput.loc[0, 'Date'], "%Y-%m-%d")
+_offsets = (3, 1, 1, 1, 1, 1, 2)
+def prev_weekday(adate):
+    return adate - timedelta(days=_offsets[adate.weekday()])
+prev_date = prev_weekday(predictDate).strftime("%Y-%m-%d")
+
+def load_prev_date():
+    logging.info(f'Load data from histdailyprice3 table in MySQL.')
+    try: 
+        conn = mysql.connector.connect(
+            host=HOST,
+            port=PORT,
+            user=USER,
+            password=PASSWORD,
+            database="GlobalMarketData"
+        )
+        query = f"SELECT Date, Symbol, Exchange, Close, Open, High, Low, Volume from histdailyprice3 WHERE Date='{prev_date}';"
+        histdailyprice3 = pd.read_sql(query, conn)
+        conn.close()
+        return histdailyprice3
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)
+
 
 """
 March 11 2022
