@@ -6,6 +6,9 @@ from tensorflow.keras.layers import Dense, Dropout,LSTM
 from sklearn.preprocessing import MinMaxScaler
 import logging
 
+DEFAULT_STEP = 100
+MIN_D_SIZE = DEFAULT_STEP * 2.1
+
 # normalize data
 def normalize(close):
     logging.info(f'LSTM normalize')
@@ -41,7 +44,8 @@ def test_train_split(scaled_data, train_size, time_step):
         X_train, y_train = create_dataset(train_data, time_step)
         X_test, y_test = create_dataset(test_data, time_step)
         logging.debug("x_train:{}, y_train:{}, X_test:{}, y_test:{}".format(X_train.shape,y_train.shape,X_test.shape,y_test.shape))
-        X_train = X_train.reshape(X_train.shape[0], X_train.shape[1] , 1)
+        if train_size > 0:
+            X_train = X_train.reshape(X_train.shape[0], X_train.shape[1] , 1)
         X_test = X_test.reshape(X_test.shape[0], X_test.shape[1] , 1)
         return X_train, y_train, X_test, y_test
     except Exception as e:
@@ -87,8 +91,11 @@ def k_tuner(symbol, X_train, y_train, X_test, ytest):
 def tune(symbol, close):
     logging.info(f'Tune LSTM')
     try:
+        dsize = len(close)
+        if dsize < MIN_D_SIZE:
+            raise ValueError(f'data size {dsize} is smaller than minium data size:{MIN_D_SIZE}')
         scaler, scaled_data = normalize(close)
-        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.9, time_step=100)
+        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0.9, time_step=DEFAULT_STEP)
         model = k_tuner(symbol, X_train, y_train, X_test, y_test)
         return model
     except Exception as e:
@@ -98,10 +105,14 @@ def tune(symbol, close):
 def predict(model, close):
     logging.info(f'LSTM Predict')
     try:
+        dsize = len(close)
+        if dsize < MIN_D_SIZE:
+            raise ValueError(f'data size {dsize} is smaller than minium data size:{MIN_D_SIZE}')
         scaler, scaled_data = normalize(close)
-        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0, time_step=100)
+        X_train, y_train, X_test, y_test = test_train_split(scaled_data, train_size=0, time_step=DEFAULT_STEP)
         scaled_predict = model.predict(X_test)
         predict = scaler.inverse_transform(scaled_predict)
+        logging.debug(" In Predict: {}".format(predict[-1]))
         return predict[-1][0]
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
