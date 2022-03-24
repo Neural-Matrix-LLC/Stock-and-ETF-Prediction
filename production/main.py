@@ -62,7 +62,7 @@ def mlp_predict(symbol, X, realized_vol):
 
 def lstm_predict(symbol, close):
     try:
-        dpath = f"params/lstm/{symbol}.h5"
+        dpath = f"model/params/lstm/{symbol}.h5"
         if path.isfile(dpath):
             logging.info(f'Load LSTM model from {dpath}')
             model = keras.models.load_model(dpath)
@@ -84,6 +84,8 @@ def main():
         logging.info(f'Loop through symbols')
 
         rowlist = []
+        # symlist = ['SPY','MSFT','CCIV','DAL','LCID']
+        # for symbol in symlist:
         for symbol in symbol_list.Symbol:
             logging.info(f'Generate predictions for {symbol}')
             try:
@@ -109,7 +111,7 @@ def main():
             except Exception as e:
                 logging.error("Exception occurred", exc_info=True)
         output_df = pd.DataFrame(rowlist)
-        output_df.to_csv(f'daily_output/predict_{run_time}.csv')
+        output_df.to_csv(f'daily_output/predict_{today}.csv')
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
