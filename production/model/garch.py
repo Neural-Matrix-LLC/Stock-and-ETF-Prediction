@@ -1,4 +1,5 @@
 from arch import arch_model
+from arch.__future__ import reindexing
 import logging
 from multiprocessing import Pool
 from statsmodels.stats.diagnostic import het_arch
