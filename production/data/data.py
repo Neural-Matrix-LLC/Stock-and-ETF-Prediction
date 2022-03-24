@@ -17,8 +17,8 @@ def load_symbols():
     """
     try:
         logging.info(f'Fetch symbols in stocks_and_etfs/.')
-        stock_list = pd.read_csv("stocks_and_etfs/stock_list.csv")
-        etf_list = pd.read_csv("stocks_and_etfs/etf_list.csv")
+        stock_list = pd.read_csv("data/stocks_and_etfs/stock_list.csv")
+        etf_list = pd.read_csv("data/stocks_and_etfs/etf_list.csv")
         symbol_list = stock_list.append(etf_list).rename({"0": "Symbol"}, axis=1).reset_index(drop=True)
         return symbol_list
     except Exception as e:
@@ -36,7 +36,7 @@ def load_df(stock_symbol):
     dpath = f"histdailyprice3/{stock_symbol}.csv"
     if path.isfile(dpath):
         logging.info(f'Load data from {dpath}.')
-        load_csv(dpath)
+        return load_csv(dpath)
     else:
         logging.info(f'Load data from histdailyprice3 table in MySQL.')
         try: 
