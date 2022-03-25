@@ -15,7 +15,7 @@ predict_svr float
 predict_mlp float 
 predict_LSTM float
 """
-
+# GLOBAL VARIABLES
 HOST="143.244.188.157"
 PORT="3306"
 USER="patrick-finProj"
@@ -55,7 +55,14 @@ def load_prev_date(prev_date):
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
+def prev_weekday(adate):
+    _offsets = (3, 1, 1, 1, 1, 1, 2)
+    prev_date = adate - timedelta(days=_offsets[adate.weekday()])
+    logging.info(f'Previous market date is {prev_date}.')
+    return prev_date
+
 def get_price_movement(change):
+    logging.info(f'Get price movement.')
     if change > 0:
         return 1
     elif change < 0:
@@ -63,15 +70,24 @@ def get_price_movement(change):
     else:
         return 0
 
+def get_above_threshold(volatility, threshold):
+    logging.info(f'Check whether volatility is above {threshold}%.')
+    if volatility > threshold:
+        return True
+    else:
+        return False
+
 def main():
+    threshold = 2
+    
     dailyoutput_df = load_daily_outputs()
     predictDate = datetime.strptime(dailyoutput_df.loc[0, 'Date'], "%Y-%m-%d")
-    _offsets = (3, 1, 1, 1, 1, 1, 2)
-    def prev_weekday(adate):
-        return adate - timedelta(days=_offsets[adate.weekday()])
+    
     prev_date = prev_weekday(predictDate).strftime("%Y-%m-%d")
     prev_date_df = load_prev_date(prev_date)
     predict_df = dailyoutput_df.merge(prev_date_df, on='Symbol')
     predict_df["close_change"] = predict_df.loc[:, 'LSTM'] - predict_df.loc[:, 'Close']
     predict_df["price_movement"] = predict_df["close_change"].apply(get_price_movement)
+    predict_df["volatility"] = predict_df[['garch', 'svr', 'mlp']].mean(axis=1)
+    predict_df["above_threshold"] = predict_df["volatility"].apply(lambda x: get_above_threshold(x, threshold))
     pass
