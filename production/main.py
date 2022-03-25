@@ -7,7 +7,7 @@ from model import garch, svr, mlp, lstm
 from tensorflow import keras
 import json
 
-logging.basicConfig(filename='logging/app.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+logging.basicConfig(filename='logging/main.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 def garch_predict(symbol, returns):
     try:

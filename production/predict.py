@@ -15,6 +15,9 @@ predict_svr float
 predict_mlp float 
 predict_LSTM float
 """
+
+logging.basicConfig(filename='logging/predict.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+
 # GLOBAL VARIABLES
 HOST="143.244.188.157"
 PORT="3306"
