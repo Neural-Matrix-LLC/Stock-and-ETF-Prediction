@@ -77,8 +77,20 @@ def get_above_threshold(volatility, threshold):
     else:
         return False
 
+def get_prediction(predict_df):
+    logging.info(f'Get prediction from price movement and whether it is above threshold%.')
+    if predict_df["price_movement"] == 1 and predict_df["above_threshold"]:
+        return 1
+    elif predict_df["price_movement"] == -1 and predict_df["above_threshold"]:
+        return -1
+    else:
+        return 0
+
 def main():
-    threshold = 2
+    logging.info(f'Start predict.py')
+    threshold = 2 # Percent
+    today = date.today()
+    today = today.strftime("%Y-%m-%d")
     
     dailyoutput_df = load_daily_outputs()
     predictDate = datetime.strptime(dailyoutput_df.loc[0, 'Date'], "%Y-%m-%d")
@@ -90,4 +102,5 @@ def main():
     predict_df["price_movement"] = predict_df["close_change"].apply(get_price_movement)
     predict_df["volatility"] = predict_df[['garch', 'svr', 'mlp']].mean(axis=1)
     predict_df["above_threshold"] = predict_df["volatility"].apply(lambda x: get_above_threshold(x, threshold))
-    pass
+    predict_df["prediction"] = predict_df.apply(get_prediction, axis=1)
+    predict_df.to_csv(f'predict_final/predict_{today}.csv')

@@ -9,6 +9,8 @@
 │   │   ├── stock_list.csv
 │   ├── data.py
 │   ├── processing.py
+├── logging
+│   ├── app.log
 ├── model
 │   ├── params
 │   |   ├── model={garch, svr, mlp}
@@ -20,10 +22,11 @@
 │   ├── mlp.py
 │   ├── lstm.py
 ├── output
-│   ├── {symbol_date}.csv
-├── logging
-│   ├── app.log
+│   ├── dailyoutput_{today}.csv
+├── predict_final
+│   ├── predict_{today}.csv
 ├── main.py
+├── predict.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
