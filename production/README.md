@@ -21,7 +21,7 @@
 │   ├── svr.py
 │   ├── mlp.py
 │   ├── lstm.py
-├── output
+├── daily_output
 │   ├── dailyoutput_{today}.csv
 ├── predict_final
 │   ├── predict_{today}.csv

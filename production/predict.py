@@ -14,6 +14,7 @@ predict_garch float
 predict_svr float 
 predict_mlp float 
 predict_LSTM float
+prev_close float
 """
 
 logging.basicConfig(filename='logging/predict.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
@@ -93,9 +94,9 @@ def get_prediction(predict_df):
     logging.info(f'Get prediction from price movement and whether it is above threshold%.')
     try:
         if predict_df["price_movement"] == 1 and predict_df["above_threshold"]:
-            return 1
+            return 1 
         elif predict_df["price_movement"] == -1 and predict_df["above_threshold"]:
-            return -1
+            return -1 
         else:
             return 0
     except Exception as e:
@@ -112,11 +113,16 @@ def main():
         predictDate = datetime.strptime(dailyoutput_df.loc[0, 'Date'], "%Y-%m-%d")
         
         prev_date = prev_weekday(predictDate).strftime("%Y-%m-%d")
+        # Load previous close
         prev_date_df = load_prev_date(prev_date)
         predict_df = dailyoutput_df.merge(prev_date_df, on='Symbol')
+
         predict_df["close_change"] = predict_df.loc[:, 'LSTM'] - predict_df.loc[:, 'Close']
         predict_df["price_movement"] = predict_df["close_change"].apply(get_price_movement)
+
+        # Volatility aqgregation
         predict_df["volatility"] = predict_df[['garch', 'svr', 'mlp']].mean(axis=1)
+
         predict_df["above_threshold"] = predict_df["volatility"].apply(lambda x: get_above_threshold(x, threshold))
         predict_df["prediction"] = predict_df.apply(get_prediction, axis=1)
         predict_df.to_csv(f'predict_final/predict_{today}.csv')
