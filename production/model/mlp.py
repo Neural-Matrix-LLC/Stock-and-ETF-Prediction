@@ -19,7 +19,7 @@ def tune(X, y):
 
         return top_params
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("tune: Exception occurred", exc_info=True)
 
 # Predict with MLP using best parameters
 def predict(X, y, params):
@@ -33,4 +33,4 @@ def predict(X, y, params):
         prediction = clf.predict(X.iloc[-1:])
         return prediction[0]
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("predict: Exception occurred", exc_info=True)

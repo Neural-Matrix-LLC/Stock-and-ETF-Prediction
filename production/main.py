@@ -77,21 +77,24 @@ def lstm_predict(symbol, close):
 
 def checkData(backDate, symlist):
     logging.info(f'Check data on {backDate}')
-    for symbol in symlist:
-        df = data.load_df(symbol, True, backDate)
-        lastdt = df.iloc[-1, df.columns.get_loc('Date')]
-        lastdt = lastdt.strftime("%Y-%m-%d")
-        print(f'Last date of {symbol} data is {lastdt}')   
-        # Data Processing
-        logging.info(f'Data processing for {symbol}')
-        close = df["Close"]
-        returns, n, split_date = processing.get_returns(close)
-        X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
-        df['Return'] = returns
-        df['RealizedVol'] = realized_vol
-        df['X0'] = X[0]
-        df['X1'] = X[1]
-        df.to_csv(f'check_data{lastdt}_{symbol}.csv', index=False)        
+    try:
+        for symbol in symlist:
+            df = data.load_df(symbol, True, backDate)
+            lastdt = df.iloc[-1, df.columns.get_loc('Date')]
+            lastdt = lastdt.strftime("%Y-%m-%d")
+            print(f'Last date of {symbol} data is {lastdt}')   
+            # Data Processing
+            logging.info(f'Data processing for {symbol}')
+            close = df["Close"]
+            returns, n, split_date = processing.get_returns(close)
+            X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
+            df['Return'] = returns
+            df['RealizedVol'] = realized_vol
+            df['X0'] = X[0]
+            df['X1'] = X[1]
+            df.to_csv(f'check_data{lastdt}_{symbol}.csv', index=False)
+    except Exception as e:
+        logging.error(f"Exception occurred at checkData({backDate})", exc_info=True)
 
 def main(RunDaily, backDate=None):
     logging.info(f'Start main.py')
@@ -145,11 +148,10 @@ def main(RunDaily, backDate=None):
             logging.info(f'Exported dailyoutput_{today}.csv')
         data.StoreDailyOutput(output_df)
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("Exception occurred at main()", exc_info=True)
 
 if __name__ == '__main__':
-    # when train the models again, set rDaily = False and 
-    # remove all model/params files
+    # when train the models again, set rDaily = False and remove all model/params files
     rDaily = True
     backDt = '2022-03-22'
     import logging

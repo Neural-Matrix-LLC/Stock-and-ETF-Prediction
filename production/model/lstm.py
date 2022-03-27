@@ -17,7 +17,7 @@ def normalize(close):
         scaled_data = scaler.fit_transform(close.values.reshape(-1, 1))
         return scaler, scaled_data
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("normalize: Exception occurred", exc_info=True)
         
 # test-train split
 def create_dataset(dataset, time_step):
@@ -29,7 +29,7 @@ def create_dataset(dataset, time_step):
             y_data.append(dataset[i + time_step, 0])
         return np.array(x_data), np.array(y_data)
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("create_dataset: Exception occurred", exc_info=True)
 
 # Preparing train and test data
 def test_train_split(scaled_data, train_size, time_step):
@@ -49,7 +49,7 @@ def test_train_split(scaled_data, train_size, time_step):
         X_test = X_test.reshape(X_test.shape[0], X_test.shape[1] , 1)
         return X_train, y_train, X_test, y_test
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("test_train_split: Exception occurred", exc_info=True)
 
 # Compile Model
 def build_model(hp):
@@ -67,7 +67,7 @@ def build_model(hp):
         model.compile(loss='mean_squared_error',optimizer='adam' )
         return model
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("build_model: Exception occurred", exc_info=True)
 
 # Tune Model Parameters
 def k_tuner(symbol, X_train, y_train, X_test, ytest):
@@ -85,7 +85,7 @@ def k_tuner(symbol, X_train, y_train, X_test, ytest):
         model = tuner.get_best_models(num_models=1)[0]
         return model
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("k_tuner: Exception occurred", exc_info=True)
 
 # LSTM Tune
 def tune(symbol, close):
@@ -99,7 +99,7 @@ def tune(symbol, close):
         model = k_tuner(symbol, X_train, y_train, X_test, y_test)
         return model
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("tune: Exception occurred", exc_info=True)
 
 # LSTM prediction    
 def predict(model, close):
@@ -115,4 +115,4 @@ def predict(model, close):
         logging.debug(" In Predict: {}".format(predict[-1]))
         return predict[-1][0]
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("predict: Exception occurred", exc_info=True)
