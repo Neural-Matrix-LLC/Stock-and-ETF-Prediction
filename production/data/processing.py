@@ -10,7 +10,7 @@ def get_returns(close, split=0.01):
         split_date = returns[-n:].index
         return returns, n, split_date
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("Exception occurred at get_returns()", exc_info=True)
 
 # Compute realized volatility
 def get_realized_vol(returns, rolling_window):
@@ -24,4 +24,4 @@ def get_realized_vol(returns, rolling_window):
         realized_vol.dropna(inplace=True)
         return X, realized_vol
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("Exception occurred at get_realized_vol()", exc_info=True)

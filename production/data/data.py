@@ -12,7 +12,7 @@ def load_csv(dpath):
         df = pd.read_csv(dpath)
         return df
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("Exception occurred at load_csv()", exc_info=True)
 
 def load_symbols():
     """
@@ -25,7 +25,7 @@ def load_symbols():
         symbol_list = stock_list.append(etf_list).rename({"0": "Symbol"}, axis=1).reset_index(drop=True)
         return symbol_list
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("Exception occurred at load_symbols()", exc_info=True)
 
 def load_df(stock_symbol, DailyMode=True, lastdt=None):
     """
@@ -88,4 +88,4 @@ def StoreDailyOutput(df):
         # Convert dataframe to sql table                                   
         df.to_sql(name=table, con=engine, if_exists='append', index=False)
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error("Exception occurred at StoreDailyOutput()", exc_info=True)
