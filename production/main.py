@@ -24,7 +24,7 @@ def garch_predict(symbol, returns):
         garch_predict = garch.predict(returns, params)
         return garch_predict
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error(f"Exception occurred at garch_predict({symbol})", exc_info=True)
 
 def svr_predict(symbol, X, realized_vol):
     try:
@@ -41,7 +41,7 @@ def svr_predict(symbol, X, realized_vol):
         svr_predict = svr.predict(X, realized_vol, params)
         return svr_predict
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error(f"Exception occurred at svrPredict{symbol}", exc_info=True)
 
 def mlp_predict(symbol, X, realized_vol):
     try:
@@ -58,7 +58,7 @@ def mlp_predict(symbol, X, realized_vol):
         mlp_predict = mlp.predict(X, realized_vol, params)
         return mlp_predict
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+        logging.error(f"Exception occurred at mlp_predict({symbol})", exc_info=True)
 
 def lstm_predict(symbol, close):
     try:
@@ -73,53 +73,88 @@ def lstm_predict(symbol, close):
         lstm_predict = lstm.predict(model, close)
         return lstm_predict
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True) 
+        logging.error(f"Exception occurred at lstm_predict({symbol})", exc_info=True) 
 
-def main():
+def checkData(backDate, symlist):
+    logging.info(f'Check data on {backDate}')
+    for symbol in symlist:
+        df = data.load_df(symbol, True, backDate)
+        lastdt = df.iloc[-1, df.columns.get_loc('Date')]
+        lastdt = lastdt.strftime("%Y-%m-%d")
+        print(f'Last date of {symbol} data is {lastdt}')   
+        # Data Processing
+        logging.info(f'Data processing for {symbol}')
+        close = df["Close"]
+        returns, n, split_date = processing.get_returns(close)
+        X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
+        df['Return'] = returns
+        df['RealizedVol'] = realized_vol
+        df['X0'] = X[0]
+        df['X1'] = X[1]
+        df.to_csv(f'check_data{lastdt}_{symbol}.csv', index=False)        
+
+def main(RunDaily, backDate=None):
     logging.info(f'Start main.py')
     try:
         today = date.today()
         today = today.strftime("%Y-%m-%d")
         symbol_list = data.load_symbols()
         logging.info(f'Loop through symbols')
+        dlypath = f'daily_output/dailyoutput_{today}.csv'
 
-        rowlist = []
-        # symlist = ['SPY','MSFT','CCIV','DAL','LCID']
-        # for symbol in symlist:
-        for symbol in symbol_list.Symbol:
-            logging.info(f'Generate predictions for {symbol}')
-            try:
-                df = data.load_df(symbol)
-                exchange = df.Exchange.iloc[0]
+        if path.isfile(dlypath):
+            logging.info(f'Loading dailyoutputs from {dlypath}')
+            output_df = pd.read_csv(dlypath)
+            print(output_df.info())
+            print(output_df.head())
+        else:
+            rowlist = []
+            for symbol in symbol_list.Symbol:
+                logging.info(f'Generate predictions for {symbol}')
+                try:
+                    df = data.load_df(symbol, RunDaily, backDate)
+                    exchange = df.Exchange.iloc[0]
 
-                # Data Processing
-                logging.info(f'Data processing for {symbol}')
-                close = df["Close"]
-                returns, n, split_date = processing.get_returns(close)
-                X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
+                    lastClo = df.iloc[-1, df.columns.get_loc('Close')]
+                    lastdt = df.iloc[-1, df.columns.get_loc('Date')]
+                    lastdt = lastdt.strftime("%Y-%m-%d")
+                    logging.info(f'Last date of {symbol} data is {lastdt} and Close {lastClo}')    
 
-                output_dict = {
-                    "Date": today,
-                    "Symbol": symbol,
-                    "Exchange": exchange,
-                    "garch": garch_predict(symbol, returns),
-                    "svr": svr_predict(symbol, X, realized_vol),
-                    "mlp": mlp_predict(symbol, X, realized_vol),
-                    "LSTM": lstm_predict(symbol, close)
-                }
-                rowlist.append(output_dict)
-            except Exception as e:
-                logging.error("Exception occurred", exc_info=True)
-        output_df = pd.DataFrame(rowlist)
-        output_df.to_csv(f'daily_output/dailyoutput_{today}.csv')
-        logging.info(f'Exported dailyoutput_{today}.csv')
+                    # Data Processing
+                    logging.info(f'Data processing for {symbol}')
+                    close = df["Close"]
+                    returns, n, split_date = processing.get_returns(close)
+                    X, realized_vol = processing.get_realized_vol(returns, rolling_window=5)
+
+                    output_dict = {
+                        "Date": lastdt, # use the last date from data set
+                        "Symbol": symbol,
+                        "Exchange": exchange,
+                        "garch": garch_predict(symbol, returns),
+                        "svr": svr_predict(symbol, X, realized_vol),
+                        "mlp": mlp_predict(symbol, X, realized_vol),
+                        "LSTM": lstm_predict(symbol, close),
+                        "prev_Close": lastClo
+                    }
+                    rowlist.append(output_dict)
+                except Exception as e:
+                    logging.error("Exception occurred", exc_info=True)
+            output_df = pd.DataFrame(rowlist)
+            output_df = output_df.sort_values(by=['Date','Symbol'])
+            output_df.to_csv(f'daily_output/dailyoutput_{today}.csv', index=False)
+            logging.info(f'Exported dailyoutput_{today}.csv')
+        data.StoreDailyOutput(output_df)
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
 if __name__ == '__main__':
+    # when train the models again, set rDaily = False and 
+    # remove all model/params files
+    rDaily = True
+    backDt = '2022-03-22'
     import logging
     logging.getLogger().setLevel(logging.DEBUG)
-    main()
+    main(rDaily, backDt)
 
 """
 Table: DailyOutputs
