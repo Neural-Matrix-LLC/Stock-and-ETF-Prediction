@@ -4,19 +4,6 @@ import pandas as pd
 import logging
 from datetime import date, timedelta, datetime
 
-"""
-Table: DailyOutputs
-Columns:
-Date date PK 
-Symbol varchar(45) PK 
-Exchange varchar(45) PK 
-predict_garch float 
-predict_svr float 
-predict_mlp float 
-predict_LSTM float
-prev_close float
-"""
-
 logging.basicConfig(filename='logging/predict.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 # GLOBAL VARIABLES
@@ -89,12 +76,26 @@ def main():
         dailyoutput_df["close_change"] = dailyoutput_df.loc[:, 'LSTM'] - dailyoutput_df.loc[:, 'prev_Close']
         dailyoutput_df["price_movement"] = dailyoutput_df["close_change"].apply(get_price_movement)
 
-        # Volatility aqgregation
+        # Volatility aggregation for each symbol update later
         dailyoutput_df["volatility"] = dailyoutput_df[['garch', 'svr', 'mlp']].mean(axis=1)
-
         dailyoutput_df["above_threshold"] = dailyoutput_df["volatility"].apply(lambda x: get_above_threshold(x, threshold))
         dailyoutput_df["prediction"] = dailyoutput_df.apply(get_prediction, axis=1)
-        dailyoutput_df.to_csv(f'predict_final/predict_{today}.csv')
+        
+        predict_df = dailyoutput_df[["Date", "Symbol", "Exchange", "prediction"]]
+        predict_df.to_csv(f'predict_final/predict_{today}.csv')
         logging.info(f'Exported predict_{today}.csv')
     except:
         logging.error("Exception occurred at main()", exc_info=True)
+
+"""
+Table: DailyOutputs
+Columns:
+Date date PK 
+Symbol varchar(45) PK 
+Exchange varchar(45) PK 
+predict_garch float 
+predict_svr float 
+predict_mlp float 
+predict_LSTM float
+prev_close float
+"""
