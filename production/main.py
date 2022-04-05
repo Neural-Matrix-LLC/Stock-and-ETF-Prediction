@@ -1,13 +1,15 @@
 import pandas as pd
 import logging
 from os import path
-from datetime import date
+from datetime import datetime, timedelta
+import predict
+import eoddata_fetch
 from data import data, processing
 from model import garch, svr, mlp, lstm
 from tensorflow import keras
 import json
-
-logging.basicConfig(filename='logging/main.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+from dotenv import load_dotenv
+from dateutil.rrule import rrule, DAILY
 
 def garch_predict(symbol, returns):
     try:
@@ -96,20 +98,16 @@ def checkData(backDate, symlist):
     except Exception as e:
         logging.error(f"Exception occurred at checkData({backDate})", exc_info=True)
 
-def main(RunDaily, backDate=None):
-    logging.info(f'Start main.py')
+def main(RunDaily, backDate):
+    logging.info(f'Start main.py Rundaily:{RunDaily}, backDate:{backDate}')
     try:
-        today = date.today()
-        today = today.strftime("%Y-%m-%d")
         symbol_list = data.load_symbols()
         logging.info(f'Loop through symbols')
-        dlypath = f'daily_output/dailyoutput_{today}.csv'
+        dlypath = f'daily_output/dailyoutput_{backDate}.csv'
 
         if path.isfile(dlypath):
             logging.info(f'Loading dailyoutputs from {dlypath}')
             output_df = pd.read_csv(dlypath)
-            print(output_df.info())
-            print(output_df.head())
         else:
             rowlist = []
             for symbol in symbol_list.Symbol:
@@ -144,20 +142,51 @@ def main(RunDaily, backDate=None):
                     logging.error("Exception occurred", exc_info=True)
             output_df = pd.DataFrame(rowlist)
             output_df = output_df.sort_values(by=['Date','Symbol'])
-            output_df.to_csv(f'daily_output/dailyoutput_{today}.csv', index=False)
-            logging.info(f'Exported dailyoutput_{today}.csv')
+            output_df = predict.predictdf(output_df)
+            output_df = output_df[["Date", "Symbol", "Exchange", "garch", "svr", "mlp", "LSTM", "prev_Close", "prediction", "volatility"]]
+            output_df.to_csv(f'daily_output/dailyoutput_{backDate}.csv', index=False)
+            logging.info(f'Exported dailyoutput_{backDate}.csv')
         data.StoreDailyOutput(output_df)
     except Exception as e:
         logging.error("Exception occurred at main()", exc_info=True)
 
 if __name__ == '__main__':
-    # when train the models again, set rDaily = False and remove all model/params files
-    rDaily = True
-    backDt = '2022-03-22'
-    import logging
+    load_dotenv("mysql.env") #Check path for env variables
+    logging.basicConfig(filename=f'logging/main_{datetime.today().date()}.log', filemode='a', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
     logging.getLogger().setLevel(logging.DEBUG)
-    main(rDaily, backDt)
+    # when train the models again, set rDaily = False and remove all model/params files
+    mktdate = data.get_Max_date("GlobalMarketData.histdailyprice3")
+    Sdate = mktdate+ timedelta(days=1)
+    mToday = datetime.today().date()
+    exchanges = ['NYSE','AMEX','NASDAQ']
+    logging.info(f"EODDATA Fetch from {Sdate} to {mToday}")
+    for dt in rrule(DAILY, dtstart=Sdate, until=mToday):
+        if dt.weekday() not in range(0, 5):
+            logging.info(f'{dt} is not on weekday')
+            break
+        eoddata_fetch.fetch_by_exchanges(dt, exchanges)
+    logging.info(f"Finish EODDATA Fetch!!")
 
+    mktdate = data.get_Max_date("GlobalMarketData.histdailyprice3")
+    dlyoutput = data.get_Max_date("MarketPredict.DailyOutputs")
+    rDaily = True
+    if dlyoutput is None:
+        dlyoutput = datetime.date(2022,3,23)
+    Sdate = dlyoutput+ timedelta(days=1)
+    logging.info(f"Process dailyoutput from {Sdate} to {mktdate}")
+    if mktdate >= Sdate:
+        for dt in rrule(DAILY, dtstart=Sdate, until=mktdate):
+            dt = dt.date()
+            if dt.weekday() < 5: # weekday only
+                main(rDaily, dt)
+    logging.info(f"Finish Process dailyoutput !!")
+
+    Sdate = data.get_Max_date("MarketPredict.DailyPerformance")
+    if (Sdate is None):
+        Sdate = datetime(2022,3,24).date()
+    Sdate = Sdate+ timedelta(days=1)
+    eoddata_fetch.get_daily_performance(Sdate, mToday)
+    logging.info(f"Finish Process DailyPerformance !!")
 """
 Table: DailyOutputs
 Columns:
