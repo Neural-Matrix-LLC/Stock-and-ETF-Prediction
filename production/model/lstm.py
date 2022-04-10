@@ -1,5 +1,7 @@
 import numpy as np
 import keras_tuner
+import keras.backend as K
+import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout,LSTM
@@ -51,6 +53,62 @@ def test_train_split(scaled_data, train_size, time_step):
     except Exception as e:
         logging.error("test_train_split: Exception occurred", exc_info=True)
 
+# Custom Loss function
+def custom_loss(y_true, y_pred):
+    """Customized loss function that takes into account directional loss.
+    
+    ARGS:
+    y_true: tensor of true price
+    y_pred: tensor of predicted price
+    
+    RETURN:
+    custom loss output
+    """
+    try:
+        #the "next day's price" of tensor
+        y_true_next = y_true[1:]
+        y_pred_next = y_pred[1:]
+
+        #the "today's price" of tensor
+        y_true_tdy = y_true[:-1]
+        y_pred_tdy = y_pred[:-1]
+
+        #substract to get up/down movement of the two tensors
+        y_true_diff = tf.subtract(y_true_next, y_true_tdy)
+        y_pred_diff = tf.subtract(y_pred_next, y_pred_tdy)
+
+        #create a standard tensor with zero value for comparison
+        standard = tf.zeros_like(y_pred_diff)
+
+        #compare with the standard; if true, UP; else DOWN
+        y_true_move = tf.greater_equal(y_true_diff, standard)
+        y_pred_move = tf.greater_equal(y_pred_diff, standard)
+        y_true_move = tf.reshape(y_true_move, [-1])
+        y_pred_move = tf.reshape(y_pred_move, [-1])
+
+
+        #find indices where the directions are not the same
+        condition = tf.not_equal(y_true_move, y_pred_move)
+        indices = tf.where(condition)
+
+        #move one position later
+        ones = tf.ones_like(indices)
+        indices = tf.add(indices, ones)
+        indices = K.cast(indices, dtype='int32')
+
+
+        #create a tensor to store directional loss and put it into custom loss output
+        direction_loss = tf.Variable(tf.ones_like(y_pred), dtype='float32')
+        updates = K.cast(tf.ones_like(indices), dtype='float32')
+        alpha = 1000
+        direction_loss = tf.scatter_nd_update(direction_loss, indices, alpha*updates)
+
+        custom_loss = K.mean(tf.multiply(K.square(y_true - y_pred), direction_loss), axis=-1)
+
+        return custom_loss
+    except Exception as e:
+        logging.error("Exception occurred at get_price_movement()", exc_info=True)
+
 # Compile Model
 def build_model(hp):
     logging.info(f'LSTM build_mode')
@@ -64,7 +122,7 @@ def build_model(hp):
         model.add(LSTM(units = hp.Choice('last_lstm_units', [50, 100, 150])))
         model.add(Dropout(rate = hp.Choice('rate', [0.3, 0.4, 0.5, 0.6, 0.7])))
         model.add(Dense(1))
-        model.compile(loss='mean_squared_error', optimizer='adam')
+        model.compile(loss=custom_loss, optimizer='adam')
         return model
     except Exception as e:
         logging.error("build_model: Exception occurred", exc_info=True)

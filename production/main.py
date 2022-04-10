@@ -67,7 +67,7 @@ def lstm_predict(symbol, close):
         dpath = f"model/params/lstm/{symbol}.h5"
         if path.isfile(dpath):
             logging.info(f'Load LSTM model from {dpath}')
-            model = keras.models.load_model(dpath)
+            model = keras.models.load_model(dpath, custom_objects={'custom_loss': lstm.custom_loss})
         else:
             model = lstm.tune(symbol, close)
             model.save(dpath)
