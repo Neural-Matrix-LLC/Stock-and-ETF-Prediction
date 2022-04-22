@@ -12,7 +12,6 @@ import mysql.connector
 from data import data, processing
 import predict
 
-
 def fetch_eoddata(quotes, exch, startD, endD):
     try:
         
