@@ -98,8 +98,8 @@ def checkData(backDate, symlist):
     except Exception as e:
         logging.error(f"Exception occurred at checkData({backDate})", exc_info=True)
 
-def main(RunDaily, backDate):
-    logging.info(f'Start main.py Rundaily:{RunDaily}, backDate:{backDate}')
+def main(backDate):
+    logging.info(f'Start main.py backDate:{backDate}')
     try:
         symbol_list = data.load_symbols()
         logging.info(f'Loop through symbols')
@@ -113,7 +113,7 @@ def main(RunDaily, backDate):
             for symbol in symbol_list.Symbol:
                 logging.info(f'Generate predictions for {symbol}')
                 try:
-                    df = data.load_df(symbol, RunDaily, backDate)
+                    df = data.load_df(symbol, True, backDate)
                     exchange = df.Exchange.iloc[0]
 
                     lastClo = df.iloc[-1, df.columns.get_loc('Close')]
@@ -133,7 +133,9 @@ def main(RunDaily, backDate):
                         "Exchange": exchange,
                         "garch": garch_predict(symbol, returns),
                         "svr": svr_predict(symbol, X, realized_vol),
+                        # "svrRP": svr_predict(symbol, X, realized_vol)/lastClo*100 ,
                         "mlp": mlp_predict(symbol, X, realized_vol),
+                        # "mlpRP": mlp_predict(symbol, X, realized_vol)/lastClo*100,
                         "LSTM": lstm_predict(symbol, close),
                         "prev_Close": lastClo
                     }
@@ -163,27 +165,30 @@ if __name__ == '__main__':
     for dt in rrule(DAILY, dtstart=Sdate, until=mToday):
         if dt.weekday() not in range(0, 5):
             logging.info(f'{dt} is not on weekday')
-            break
-        eoddata_fetch.fetch_by_exchanges(dt, exchanges)
+        else:
+            eoddata_fetch.fetch_by_exchanges(dt, exchanges)
     logging.info(f"Finish EODDATA Fetch!!")
 
     mktdate = data.get_Max_date("GlobalMarketData.histdailyprice3")
     dlyoutput = data.get_Max_date("MarketPredict.DailyOutputs")
-    rDaily = True
+    last_Train_date = datetime(2021,12,31).date()
+    
     if dlyoutput is None:
-        dlyoutput = datetime.date(2022,3,23)
+        dlyoutput = last_Train_date
+        eoddata_fetch.init_daily_output(dlyoutput)
     Sdate = dlyoutput+ timedelta(days=1)
+    
     logging.info(f"Process dailyoutput from {Sdate} to {mktdate}")
     if mktdate >= Sdate:
         for dt in rrule(DAILY, dtstart=Sdate, until=mktdate):
             dt = dt.date()
-            if dt.weekday() < 5: # weekday only
-                main(rDaily, dt)
+            if dt.weekday() < 5:        # weekday only
+                main(dt)
     logging.info(f"Finish Process dailyoutput !!")
 
     Sdate = data.get_Max_date("MarketPredict.DailyPerformance")
     if (Sdate is None):
-        Sdate = datetime(2022,3,24).date()
+        Sdate = last_Train_date
     Sdate = Sdate+ timedelta(days=1)
     eoddata_fetch.get_daily_performance(Sdate, mToday)
     logging.info(f"Finish Process DailyPerformance !!")
