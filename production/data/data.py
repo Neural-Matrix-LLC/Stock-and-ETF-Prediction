@@ -5,7 +5,8 @@ import pandas as pd
 import logging
 from sqlalchemy import create_engine
 
-DailySize = 300 # size of data to run daily predict
+TrainSize = 1000    # size of data to train the initial model
+DailySize = 250     # size of data to run daily predict
 
 def get_Max_date(dbntable):
     try:
@@ -63,7 +64,7 @@ def load_df(stock_symbol, DailyMode=True, lastdt=None):
         logging.info(f'Load data from {dpath}.')
         return load_csv(dpath)
     else:
-        logging.info(f'Load data from histdailyprice3 table in MySQL, Daily mode: {DailyMode}.')
+        logging.info(f'Load data from GlobalMarketData.histdailyprice3 table in MySQL, Daily mode: {DailyMode}.')
         try: 
             conn = mysql.connector.connect(
                 host=HOST,
@@ -75,12 +76,12 @@ def load_df(stock_symbol, DailyMode=True, lastdt=None):
             if DailyMode:
                 nlimit = f" order by Date desc limit {DailySize}"
             else:
-                nlimit = ""
+                nlimit = f" order by Date desc limit {TrainSize}"
             if lastdt is not None:
                 dlimit = f" and Date<='{lastdt}'"
             else:
                 dlimit =""
-            query = f"SELECT Date, Exchange, Close, Open, High, Low, Volume from histdailyprice3 WHERE Symbol='{stock_symbol}'{dlimit} {nlimit};"
+            query = f"SELECT Date, Exchange, Close, Open, High, Low, Volume from GlobalMarketData.histdailyprice3 WHERE Symbol='{stock_symbol}'{dlimit} {nlimit};"
             logging.info(f'load_df query:{query}')
             histdailyprice3 = pd.read_sql(query, conn)
             conn.close()
