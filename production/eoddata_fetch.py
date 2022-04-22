@@ -9,31 +9,9 @@ from sqlalchemy import create_engine
 import logging
 from dateutil.rrule import rrule, DAILY
 import mysql.connector
-from data import data
+from data import data, processing
+import predict
 
-
-# hostname="localhost"
-# hostname="143.244.188.157"
-# MKDB="GlobalMarketData"
-# MKTBL="histdailyprice3"
-# PORT = 3306
-# uname="choiProj"
-# pwd="$20_choi_$22"
-# uname="choi-finProj"
-# pwd="Tom#21$choi"
-# PDDB="MarketPredict"
-# PDTBL="DailyPerformance"
-
-# def get_Max_date(dbntable):
-#     try:
-#         conn = mysql.connector.connect(host=hostname,port=PORT,user=uname,password=pwd)
-#         query = f"SELECT max(Date) as maxdate from {dbntable} ;"
-#         logging.info(f'load_df query:{query}')
-#         df = pd.read_sql(query, conn)
-#         max_date = df.maxdate.iloc[0]
-#         return max_date
-#     except Exception as e:
-#         logging.error("Exception occurred at load_csv()", exc_info=True)
 
 def fetch_eoddata(quotes, exch, startD, endD):
     try:
@@ -51,20 +29,6 @@ def fetch_eoddata(quotes, exch, startD, endD):
         return rlist
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
-
-# def StoreEOD(eoddata, DBn, TBLn):
-#     try:
-#         logging.info(f'StoreEOD size: {len(eoddata)}')
-
-#         dbpath = "mysql+pymysql://{user}:{pw}@{host}/{db}".format(host=hostname, db=DBn, user=uname, pw=pwd)
-#         logging.info(f'StoreEOD to {dbpath}')
-#         # Create SQLAlchemy engine to connect to MySQL Database
-#         engine = create_engine(dbpath)
-
-#         # Convert dataframe to sql table                                   
-#         eoddata.to_sql(name=TBLn, con=engine, if_exists='append', index=False)
-#     except Exception as e:
-#         logging.error("Exception occurred", exc_info=True)
 
 def fetch_by_symbols(Sdate, Edate):
     # read csv file
@@ -103,18 +67,55 @@ def fetch_by_symbols(Sdate, Edate):
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
-def get_daily_performance(Sdate, Edate):
-    logging.info(f"EODDATA daily performance from {Sdate} to {Edate}")
+def daily_output_columns():
+    return ["Date", "Symbol", "Exchange", "garch", "svr", "mlp", "LSTM", "prev_Close", "prediction", "volatility"]
+    # return ["Date", "Symbol", "Exchange", "garch", "svr","svrRP", "mlp","mlpRP", "LSTM", "prev_Close", "prediction", "volatility"]
+
+def init_daily_output(Edate):
+    logging.info(f"eoddata.init_daily_output {Edate}")
+    DBHOST = environ.get("DBHOST")
+    DBPORT = environ.get("DBPORT")
+    DBUSER = environ.get("DBUSER")
+    DBPWD = environ.get("DBPWD")
+    DBMKTDATA = environ.get("DBMKTDATA")
+    DBPREDICT = environ.get("DBPREDICT")
+    TBLDAILYOUTPUT = environ.get("TBLDAILYOUTPUT")
+    TBLDLYPRICE = environ.get("TBLDLYPRICE")
+    TBLDAILYPERF = environ.get("TBLDAILYPERF")
 
     try:
-        hostname=environ.get("DBHOST")
-        PORT=environ.get("DBPORT")
-        uname=environ.get("DBUSER")
-        pwd=environ.get("DBPWD")
-        PDDB=environ.get("DBPREDICT")
-        PDTBL=environ.get("TBLDAILYPERF")
-        conn = mysql.connector.connect(host=hostname,port=PORT,user=uname,password=pwd)
-        query = f"SELECT Date,Symbol, Exchange, prev_Close, prediction, volatility from MarketPredict.DailyOutputs WHERE Date>='{Sdate}' and Date<='{Edate}';"
+        Sdate = Edate-datetime.timedelta(days=5)
+        logging.info(f" Reset from {Sdate} to {Edate}")
+        symbol_list = data.load_symbols()
+        rowlist = pd.DataFrame()
+        for symbol in symbol_list.Symbol:
+            query = f"SELECT Date,Symbol, Exchange, Close as prev_Close from {DBMKTDATA}.{TBLDLYPRICE} WHERE Symbol='{symbol}' and Date>='{Sdate}' and Date<='{Edate}';"
+            logging.info(f'init_daily_output query:{query}')
+            conn = mysql.connector.connect(host=DBHOST,port=DBPORT,user=DBUSER,password=DBPWD)
+            df = pd.read_sql(query, conn)
+            rowlist = rowlist.append(df, ignore_index=True)
+        logging.debug(rowlist)
+        data.StoreEOD(rowlist, DBPREDICT, TBLDAILYOUTPUT)  
+    except Exception as e:
+        logging.error("Exception occurred", exc_info=True)
+
+def get_daily_performance(Sdate, Edate):
+    logging.info(f"EODDATA daily performance from {Sdate} to {Edate}")
+    DBHOST = environ.get("DBHOST")
+    DBPORT = environ.get("DBPORT")
+    DBUSER = environ.get("DBUSER")
+    DBPWD = environ.get("DBPWD")
+    DBMKTDATA = environ.get("DBMKTDATA")
+    DBPREDICT = environ.get("DBPREDICT")
+    TBLDAILYOUTPUT = environ.get("TBLDAILYOUTPUT")
+    TBLDLYPRICE = environ.get("TBLDLYPRICE")
+    TBLDAILYPERF = environ.get("TBLDAILYPERF")
+
+    try:
+        mythreshold = 2 # Percent
+        conn = mysql.connector.connect(host=DBHOST,port=DBPORT,user=DBUSER,password=DBPWD)
+        Hdate = Sdate - datetime.timedelta(days=5)
+        query = f"SELECT Date,Symbol, Exchange, garch,svr,mlp,LSTM,prev_Close, prediction, volatility from {DBPREDICT}.{TBLDAILYOUTPUT} WHERE Date>='{Hdate}' and Date<='{Edate}';"
         logging.info(f'load_df query:{query}')
         df = pd.read_sql(query, conn)
         symlist = df.Symbol.unique()
@@ -122,17 +123,38 @@ def get_daily_performance(Sdate, Edate):
         outputdf = pd.DataFrame(columns=df.columns.values.tolist())
         logging.debug(f'{outputdf.columns.values.tolist()}')
         for symbol in symlist:
-            symdf = df[df["Symbol"]==symbol].reset_index(drop=True)
+            closedf = df[df["Symbol"]==symbol].reset_index(drop=True)
+            symdf = closedf[closedf['Date'] >= Sdate].reset_index(drop=True)
             symdf['ActualDate'] = symdf['Date'].shift(periods=-1, axis=0)
             symdf['ActualClose'] = symdf['prev_Close'].shift(periods=-1, axis=0)
             symdf = symdf[:-1]
-            symdf['ActualPercent'] = (symdf['ActualClose'] - symdf['prev_Close'])/symdf['prev_Close']*100
-            # logging.debug(f"\n{symdf.head(3)}")
+            symdf['ActualPercent'] = abs((symdf['ActualClose'] - symdf['prev_Close'])/symdf['prev_Close']*100)
+            closedf['returns'] = 100*closedf.prev_Close.pct_change()
+            closedf['vol'] = closedf.returns.rolling(5).std()
+            logging.debug(closedf[closedf["Date"]>=Sdate].vol)
+            symdf["ActualStd"] = closedf[closedf["Date"]>=Sdate].vol
+            symdf["close_change"] = symdf.loc[:, 'ActualClose'] - symdf.loc[:, 'prev_Close']
+            symdf["price_movement"] = symdf["close_change"].apply(predict.get_price_movement)
+            symdf["above_threshold"] = symdf["ActualPercent"].apply(lambda x: predict.get_above_threshold(x, mythreshold))
+            symdf["ActualTrend"] = symdf.apply(predict.get_prediction, axis=1)
+            symdf = symdf[symdf["Date"]>=Sdate]
             outputdf = outputdf.append(symdf, ignore_index=True)
-            # logging.debug(f"\n{outputdf.tail(3)}")
+            logging.debug(f"\n{symdf.head(1)}")
+            logging.debug(f"\n{outputdf.tail(2)}")
         outputdf = outputdf.sort_values(by=['Date', 'Symbol','Exchange'])
-        outputdf.to_csv(f'daily_output/dailyPerf_{Sdate}_{Edate}.csv',index = False)
-        data.StoreEOD(outputdf, PDDB, PDTBL)  
+
+        # logging.debug("**   Start close_change   **")
+        # logging.debug(outputdf["close_change"])
+        # logging.debug("**   Start price_movement   **")
+        # logging.debug(outputdf["price_movement"])
+        # logging.debug("**   Start above_threshold   **")
+        # logging.debug(outputdf["above_threshold"])
+        # logging.debug(outputdf["ActualTrend"])
+
+        outputdf.drop(columns=['close_change', 'price_movement','above_threshold'], inplace=True)
+        lastdt = outputdf.iloc[-1, outputdf.columns.get_loc('ActualDate')]
+        outputdf.to_csv(f'daily_output/dailyPerf_{Sdate}_{lastdt}.csv',index = False)
+        data.StoreEOD(outputdf, DBPREDICT, TBLDAILYPERF)  
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
 
