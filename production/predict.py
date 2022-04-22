@@ -95,7 +95,8 @@ def predictdf(dailyoutput_df):
         dailyoutput_df["price_movement"] = dailyoutput_df["close_change"].apply(get_price_movement)
 
         # Volatility aggregation for each symbol update later
-        dailyoutput_df["volatility"] = dailyoutput_df[['garch', 'svr', 'mlp']].mean(axis=1)
+        dailyoutput_df["volatility"] = dailyoutput_df[['svr', 'mlp']].mean(axis=1)
+        # dailyoutput_df["volatility"] = dailyoutput_df[['garch', 'svr', 'mlp']].mean(axis=1)
         dailyoutput_df["above_threshold"] = dailyoutput_df["volatility"].apply(lambda x: get_above_threshold(x, threshold))
         dailyoutput_df["prediction"] = dailyoutput_df.apply(get_prediction, axis=1)
         return dailyoutput_df
