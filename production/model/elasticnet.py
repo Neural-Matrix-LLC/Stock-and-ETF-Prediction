@@ -4,6 +4,7 @@ from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import train_test_split, GridSearchCV
 import warnings
 warnings.filterwarnings('ignore')
+import logging
 
 # Setup the pipeline steps: steps
 steps = [('scaler', StandardScaler()),
