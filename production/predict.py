@@ -6,6 +6,7 @@ import logging
 import datetime as dt
 from dotenv import load_dotenv
 from data import data
+from model import elasticnet
 from dateutil.rrule import rrule, DAILY
 
 HOST=environ.get("DBHOST")
