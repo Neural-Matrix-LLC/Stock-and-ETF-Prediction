@@ -1,0 +1,156 @@
+https://lambdalabs.com/lambda-stack-deep-learning-software
+
+LAMBDA_REPO=$(mktemp) && \
+wget -O${LAMBDA_REPO} https://lambdalabs.com/static/misc/lambda-stack-repo.deb && \
+sudo dpkg -i ${LAMBDA_REPO} && rm -f ${LAMBDA_REPO} && \
+sudo apt-get update && sudo apt-get install -y lambda-stack-cuda
+sudo reboot
+
+nvcc --version  # check CUDA version
+import tensorflow as tf
+print(tf.__version__)
+import tensorflow as tf
+print(tf.version.VERSION)
+
+sudo apt-get update && sudo apt-get dist-upgrade
+
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` nvcr.io/nvidia/tensorflow:xx.xx-tfx-py3
+
+sudo docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -u $(id -u ${USER}):$(id -g ${USER}) nvcr.io/nvidia/tensorflow:21.12-tf1-py3
+
+sudo docker pull nvcr.io/nvidia/tensorflow:21.12-tf1-py3
+
+
+WARNING:tensorflow:Deprecation warnings have been disabled. Set TF_ENABLE_DEPRECATION_WARNINGS=1 to re-enable them.
+
+ usermod -aG sudo username
+
+sudo apt-get install -y dbus-user-session
+
+sudo apt-get install libmysqlclient-dev
+
+docker container prune
+docker image prune
+docker system prune
+
+docker image rm
+docker build -t stk-pred:tf1-py3 .
+docker build --no-cache --build-arg OPID=1000 -t stk-pred:tf1-py3 .
+docker build --no-cache --build-arg OPID=1000 -t stk-pred1:tf1-py3 .
+docker build --no-cache --build-arg OPID=1000 -f Dockerfile.tf2-py3 -t spred:tf2-py3 .
+docker build --no-cache --build-arg OPID=1000 -f Dockerfile.tf2-py3 -t spred-dev3:tf2-py3 .
+docker build --no-cache --build-arg OPID=1000 -f Dockerfile-dev4.tf2-py3 -t spred-dev4:tf2-py3 .
+docker build --no-cache --build-arg OPID=1000 -f Dockerfile.20-04 -t spred:20.04 .
+docker build --no-cache --build-arg OPID=1000 -f Dockerfile-dev5.tf2-py3 -t spred-dev5:tf2-py3 .
+docker build --no-cache --build-arg OPID=1000 -f Dockerfile-dev6.tf2-py3 -t spred-dev6:tf2-py3 .
+docker build --no-cache --build-arg OPID=1000 -f Dockerfile-dev7.tf2-py3 -t spred-dev7:tf2-py3 .
+sudo docker build -t lambda-stack:20.04 -f Dockerfile.focal git://github.com/lambdal/lambda-stack-dockerfiles.git
+
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) ubuntu bash
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -u $(id -u ${USER}):$(id -g ${USER}) nvcr.io/nvidia/tensorflow:21.12-tf1-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -u ${USER}:${USER} nvcr.io/nvidia/tensorflow:21.12-tf1-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` nvcr.io/nvidia/tensorflow:21.12-tf1-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -u ${UID}:${UID} stk-pred:tf1-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 stk-pred:tf1-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 stk-pred1:tf1-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred-n:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 nvcr.io/nvidia/tensorflow:21.12-tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 lambda-stack:20.04
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred:20.04
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred-dev:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred-dev3:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred-dev4-tc:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` spred-dev4-tc:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` spred-dev5:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` spred-dev6:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` spred-dev7:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred-dev6:tf2-py3
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` -p 8888:8888 spred-dev7:tf2-py3
+
+docker run --gpus all -it --rm -v `pwd`:`pwd` -w `pwd` spred-dev4-tc:tf2-py3
+
+
+jupyter notebook --ip 0.0.0.0 --no-browser --allow-root
+nvidia-smi -l 1
+from tensorflow.python.keras.models import Sequential
+
+
+For Ubuntu:
+
+$ sudo apt update
+
+$ sudo apt install python-dev
+$ sudo apt install python-MySQLdb
+
+For CentOS:
+
+$ yum install python-devel mysql-devel
+
+Installation via PyPip
+
+pip install mysql-connector-python
+
+import tensorflow as tf
+tf.test.gpu_device_name()
+
+from tensorflow.python.client import device_lib
+device_lib.list_local_devices()
+
+container has:
+1) user=opr,  id=1010, 
+2) install -r requirement.txt
+3) jupyter notebook version
+
+=====================
+Docker & Anaconda 3
+--
+docker pull continuumio/anaconda3
+docker run -i -t continuumio/anaconda3 /bin/bash
+
+or jupyter
+
+docker run -i -t -p 8888:8888 continuumio/anaconda3 /bin/bash -c "\
+    conda install jupyter -y --quiet && \
+    mkdir -p /opt/notebooks && \
+    jupyter notebook \
+    --notebook-dir=/opt/notebooks --ip='*' --port=8888 \
+    --no-browser --allow-root"
+
+docker run -i -t -p 8888:8888 -v `pwd`:`pwd` -w `pwd` continuumio/anaconda3 /bin/bash -c "\
+    conda install jupyter -y --quiet && \
+    jupyter notebook \
+    --ip='*' --port=8888 \
+    --no-browser --allow-root"
+
+docker run -i -t -p 8888:8888 continuumio/anaconda3 /bin/bash -c \
+    “/opt/conda/bin/conda install jupyter -y — quiet && \
+    mkdir /opt/notebooks && /opt/conda/bin/jupyter notebook \
+    — notebook-dir=/opt/notebooks — ip=’*’ — port=8888 — no-browser”
+
+======================
+Setup Wifi USB 
+===============
+Now just clone that repo, make and sudo make install, then re-plug the dongle.
+After being plugged in, the DWA-X1850 is in USB Mass Storage mode, 
+which can be switched to network adapter mode by ejecting the virtual 
+drive (eventually, it seems this device should be added to the USB modeswitch project).
+
+=================
+timedatectl
+# disable time synchronization
+timedatectl set-ntp off
+
+================
+# list all packages
+
+sudo dpkg --list
+sudo dpkg–query –l
+
+sudo apt-get remove package_name
+sudo apt-get remove ––purge package_name
+
+sudo apt-get clean
+sudo apt-get autoremove
+
+
